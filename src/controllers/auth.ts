@@ -1,0 +1,74 @@
+import express, { Request, Response } from "express";
+import bcrypt from "bcryptjs";
+import { checkForDuplicateUsername } from "../middlewares/checkForDuplicateUsername";
+import jwt from "jsonwebtoken";
+import { errorMessages } from "../shared/responseMessages/errorMessages";
+import { successMessages } from "../shared/responseMessages/successMessages";
+import dotenv from "dotenv";
+import { validateAuthFields } from "../middlewares/validateAuthFields";
+dotenv.config();
+
+const auth = express.Router();
+
+function generateToken(username: string, role: string) {
+  const payload = { username, role };
+  return jwt.sign(payload, process.env.JWT_SECRET as string, {
+    expiresIn: "2h",
+  });
+}
+
+auth.post(
+  "/signin",
+  validateAuthFields,
+  async (req: Request, res: Response) => {
+    try {
+      const db = req.db;
+      const { username, password, role } = req.body;
+      const user = await db.findOneUser({ username: username });
+      if (!user) {
+        return;
+      }
+      const validPassword = bcrypt.compareSync(password, user.password);
+      if (!validPassword) {
+        res.status(400).json(errorMessages.userIncorrectPassword);
+        return;
+      }
+      const token = generateToken(user.username, user.role);
+      res.status(201).send({ token });
+
+      return;
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json(errorMessages.userGet);
+    }
+  }
+);
+
+auth.post(
+  "/signup",
+  validateAuthFields,
+  checkForDuplicateUsername,
+  async (req: Request, res: Response) => {
+    try {
+      const db = req.db;
+      const { username, password, role } = req.body;
+      const salt = bcrypt.genSaltSync(
+        Number(process.env.BCYRPT_SALT as string)
+      );
+
+      const hashPassword = bcrypt.hashSync(password, salt);
+
+      await db.insertUser({ username, password: hashPassword, role });
+
+      res.status(201).json(successMessages.userCreate);
+      return;
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json(errorMessages.userCreate);
+    }
+  }
+);
+
+export default auth;
