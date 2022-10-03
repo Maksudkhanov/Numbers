@@ -5,7 +5,6 @@ import { IUser } from "../../interfaces/entities/user";
 declare global {
   namespace Express {
     interface Request {
-      db: IDatabase;
       user: string | JwtPayload;
     }
   }
