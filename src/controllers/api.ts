@@ -1,10 +1,10 @@
 import express, { Request, Response } from "express";
-import { authCheckMiddleware } from "../middlewares/authCheck";
-import { checkForDuplicateId } from "../middlewares/checkForDuplicateId";
-import { checkForDuplicateValue } from "../middlewares/checkForDuplicateValue";
-import { isNumberExists } from "../middlewares/isNumberExists";
-import { validateNumberFields } from "../middlewares/validateNumberFields";
-import { validateUpdatingFieldsNumber } from "../middlewares/validateUpdatingFieldsNumber";
+import { authCheckMiddleware } from "../middlewares/user/authCheck";
+import { checkForDuplicateId } from "../middlewares/number/checkForDuplicateId";
+import { checkForDuplicateValue } from "../middlewares/number/checkForDuplicateValue";
+import { isNumberExists } from "../middlewares/number/isNumberExists";
+import { validateNumberFields } from "../middlewares/number/validateNumberFields";
+import { validateUpdatingFieldsNumber } from "../middlewares/number/validateUpdatingFieldsNumber";
 import NumberService from "../services/numberService";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 import { successMessages } from "../shared/responseMessages/successMessages";
@@ -18,17 +18,15 @@ api.get("/allNumbers", async (req: Request, res: Response) => {
   try {
     const page = Number(req.query.page ?? 1);
     const limit = Number(req.query.limit ?? defaultLimit);
-
     const numbers = await numberService.getAllNumbers();
-
+    
     if (numbers?.length === 0) {
-      res.status(200).json(successMessages.numberNoOne);
+      res.status(404).json(errorMessages.numberNoOne);
       return;
     }
 
     const paginatedNumbers = await paginateItems(numbers)(page, limit);
     res.status(201).send(paginatedNumbers);
-    return;
   } catch (error) {
     res.status(500).json(errorMessages.numbersGet);
   }
@@ -36,9 +34,10 @@ api.get("/allNumbers", async (req: Request, res: Response) => {
 
 api.get("/number", async (req: Request, res: Response) => {
   try {
+
     const result = await numberService.getOneNumber(req.body.id);
     res.status(201).send(result);
-    return;
+
   } catch (error) {
     res.status(500).json(errorMessages.numberGet);
   }
@@ -52,9 +51,10 @@ api.post(
   checkForDuplicateValue,
   async (req: Request, res: Response) => {
     try {
+
       await numberService.createNumber(req.body);
       res.status(200).json(successMessages.numberCreate);
-      return;
+
     } catch (error) {
       res.status(500).json(errorMessages.numberCreate);
     }
@@ -68,10 +68,10 @@ api.put(
   validateUpdatingFieldsNumber,
   async (req: Request, res: Response) => {
     try {
-      await numberService.updateNumber(req.body.id, req.body.fieldsToUpdate);
 
+      await numberService.updateNumber(req.body.id, req.body.fieldsToUpdate);
       res.status(200).json(successMessages.numberUpdate);
-      return;
+
     } catch (error) {
       res.status(500).json(errorMessages.numberUpdate);
     }
@@ -84,8 +84,10 @@ api.delete(
   isNumberExists,
   async (req: Request, res: Response) => {
     try {
+
       await numberService.deleteNumber(req.body);
       res.status(200).json(successMessages.numberDelete);
+
     } catch (error) {
       res.status(500).json(errorMessages.numberDelete);
     }

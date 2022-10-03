@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { UserRoles } from "../interfaces/entities/user";
-import { errorMessages } from "../shared/responseMessages/errorMessages";
+import { UserRoles } from "../../interfaces/entities/user";
+import { errorMessages } from "../../shared/responseMessages/errorMessages";
 
 export async function validateAuthFields(
   req: Request,
@@ -19,14 +19,17 @@ export async function validateAuthFields(
     res.status(400).json(errorMessages.userAuthFields);
     return;
   }
+
   if (fields.username === "") {
     res.status(400).json(errorMessages.userUsernameIsEmpty);
     return;
   }
+  
   if (fields.password === "") {
     res.status(400).json(errorMessages.userPasswordIsEmpty);
     return;
   }
+
   if (fields.role === "") {
     res.status(400).json(errorMessages.userRoleIsEmpty);
     return;
@@ -36,5 +39,6 @@ export async function validateAuthFields(
     res.status(400).json(errorMessages.userAllowedRoles);
     return;
   }
+  
   next();
 }

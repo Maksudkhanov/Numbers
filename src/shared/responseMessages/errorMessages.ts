@@ -99,4 +99,16 @@ export const errorMessages = {
     msg: "fieldsToUpdate should contain at least monthyPrice or setupPrice",
     errCode: 1024,
   },
+  numberNoId: {
+    msg: "No Number with this id",
+    errCode: 1025,
+  },
+  numberNoOne: {
+    msg: "No Numbers",
+    errCode: 1026,
+  },
+  userNotExists: {
+    msg: "No such User",
+    errCode: 1027,
+  },
 };

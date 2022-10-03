@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { numberService } from "../controllers/api";
-import { errorMessages } from "../shared/responseMessages/errorMessages";
+import { numberService } from "../../controllers/api";
+import { errorMessages } from "../../shared/responseMessages/errorMessages";
 
 export async function checkForDuplicateValue(
   req: Request,
@@ -14,6 +14,7 @@ export async function checkForDuplicateValue(
       res.status(400).json(errorMessages.numberValueExists);
       return;
     }
+    
     next();
   } catch (error: any) {
     res.status(500).json(error);

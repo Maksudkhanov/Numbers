@@ -7,10 +7,12 @@ export class UserService implements IUserService {
     const result = await db.findOneUser(user);
     return result;
   }
+
   async insertOneUser(user: IUser): Promise<void> {
     await db.insertUser(user);
     return;
   }
+  
   async getOneUserByUsername(username: string): Promise<IUser | null> {
     const result = await db.findOneUserByUsername(username);
     return result;
