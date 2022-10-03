@@ -16,8 +16,8 @@ export default class NumberService implements INumberService {
     const result = await db.findOneNumber(id);
     return result;
   }
-  async createNumber(data: any): Promise<void> {
-    await db.insertNumber(data);
+  async createNumber(number: INumber): Promise<void> {
+    await db.insertNumber(number);
   }
   async updateNumber(
     id: number,

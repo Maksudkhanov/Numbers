@@ -10,7 +10,7 @@ export async function validateUpdatingFieldsNumber(
   const fields = req.body.fieldsToUpdate;
   const keys = Object.keys(fields);
   try {
-    if (fields) {
+    if (!fields) {
       res.status(400).json(errorMessages.numberUpdateFieldsIsEmpty);
       return;
     }

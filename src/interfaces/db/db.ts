@@ -9,6 +9,7 @@ export interface IDatabase {
   insertNumber(number: INumber): Promise<void>;
   updateNumber(id: number, fields: object): Promise<void>;
   deleteNumber(id: number): Promise<void>;
-  findOneUser(query: object): Promise<IUser | null>;
-  insertUser(doc: IUser): Promise<void>;
+  findOneUser(user: IUser): Promise<IUser | null>;
+  insertUser(user: IUser): Promise<void>;
+  findOneUserByUsername(username: string): Promise<IUser | null>;
 }

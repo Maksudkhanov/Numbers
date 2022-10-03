@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { numberService } from "../controllers/api";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 
 export async function checkForDuplicateValue(
@@ -7,9 +8,7 @@ export async function checkForDuplicateValue(
   next: NextFunction
 ) {
   try {
-    const db = req.db;
-
-    const value = await db.findOneNumber({ value: req.body.value });
+    const value = await numberService.getOneNumberByValue(req.body.value);
 
     if (value) {
       res.status(400).json(errorMessages.numberValueExists);

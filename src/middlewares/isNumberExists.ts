@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { numberService } from '../controllers/api';
 import db from "../db/db";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 import { successMessages } from "../shared/responseMessages/successMessages";
@@ -9,7 +10,7 @@ export async function isNumberExists(
   next: NextFunction
 ) {
   try {
-    const result = await db.findOneNumber(req.body.id);
+    const result = await numberService.getOneNumber(req.body.id);
     if (!result) {
       res.status(200).json(successMessages.numberNoId);
       return;

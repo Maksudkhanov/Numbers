@@ -16,21 +16,6 @@ class Database implements IDatabase {
   constructor() {
     this._client = new MongoClient(DB_URI);
   }
-  async findOneNumberByValue(value: string): Promise<INumber | null> {
-    const result = await this._db
-      .collection("numbers")
-      .findOne({ value: value });
-    if (result) {
-      return {
-        id: result.id,
-        value: result.value,
-        monthyPrice: result.monthyPrice,
-        setupPrice: result.setupPrice,
-        currency: result.currency,
-      };
-    }
-    return result;
-  }
 
   async connect(): Promise<void> {
     this._client.connect();
@@ -66,8 +51,24 @@ class Database implements IDatabase {
     return result;
   }
 
-  async insertNumber(doc: any): Promise<void> {
-    await this._db.collection("numbers").insertOne(doc);
+  async findOneNumberByValue(value: string): Promise<INumber | null> {
+    const result = await this._db
+      .collection("numbers")
+      .findOne({ value: value });
+    if (result) {
+      return {
+        id: result.id,
+        value: result.value,
+        monthyPrice: result.monthyPrice,
+        setupPrice: result.setupPrice,
+        currency: result.currency,
+      };
+    }
+    return result;
+  }
+
+  async insertNumber(number: INumber): Promise<void> {
+    await this._db.collection("numbers").insertOne(number);
     return;
   }
 
@@ -95,8 +96,22 @@ class Database implements IDatabase {
     return result;
   }
 
-  async insertUser(doc: any): Promise<void> {
-    await this._db.collection("users").insertOne(doc);
+  async findOneUserByUsername(username: string): Promise<IUser | null> {
+    const result = await this._db.collection("users").findOne({username: username});
+    if (result) {
+      return {
+        username: result.username,
+        password: result.password,
+        role: result.role,
+      };
+    }
+    return result;
+  }
+
+  async insertUser(user: IUser): Promise<void> {
+    console.log(user);
+    
+    await this._db.collection("users").insertOne(user);
     return;
   }
 }

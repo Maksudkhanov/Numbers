@@ -10,7 +10,7 @@ import { errorMessages } from "../shared/responseMessages/errorMessages";
 import { successMessages } from "../shared/responseMessages/successMessages";
 import paginateItems from "../utils/paginateItems";
 
-const numberService = new NumberService();
+export const numberService = new NumberService();
 const api = express.Router();
 const defaultLimit = 10;
 
@@ -36,7 +36,7 @@ api.get("/allNumbers", async (req: Request, res: Response) => {
 
 api.get("/number", async (req: Request, res: Response) => {
   try {
-    const result = await numberService.createNumber(req.body);
+    const result = await numberService.getOneNumber(req.body.id);
     res.status(201).send(result);
     return;
   } catch (error) {

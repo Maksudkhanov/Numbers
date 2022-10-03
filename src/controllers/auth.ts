@@ -6,7 +6,9 @@ import jwt from "jsonwebtoken";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 import { successMessages } from "../shared/responseMessages/successMessages";
 import { validateAuthFields } from "../middlewares/validateAuthFields";
+import { UserService } from "../services/userService";
 
+export const userService = new UserService();
 const auth = express.Router();
 
 function generateToken(username: string, role: string) {
@@ -22,7 +24,7 @@ auth.post(
   async (req: Request, res: Response) => {
     try {
       const { username, password, role } = req.body;
-      const user = await db.findOneUser({ username: username });
+      const user = await userService.getOneUserByUsername(username);
       if (!user) {
         return;
       }
@@ -56,7 +58,11 @@ auth.post(
 
       const hashPassword = bcrypt.hashSync(password, salt);
 
-      await db.insertUser({ username, password: hashPassword, role });
+      await userService.insertOneUser({
+        username,
+        password: hashPassword,
+        role,
+      });
 
       res.status(201).json(successMessages.userCreate);
       return;
