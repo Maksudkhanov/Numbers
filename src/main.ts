@@ -10,8 +10,6 @@ const PORT = process.env.PORT as string;
 
 (async () => {
   try {
-    db.connect();
-
     server.use("/auth", authController);
     server.use("/api", apiController);
 

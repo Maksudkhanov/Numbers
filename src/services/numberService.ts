@@ -1,10 +1,10 @@
 import db from "../db/db";
+import { ISuccessMessage } from '../interfaces/db/successMessage';
 import { IFieldsToUpdate } from "../interfaces/entities/number/fieldsToUpdate";
 import { INumber } from "../interfaces/entities/number/number";
 import { INumberService } from "../interfaces/services/numberService";
 
 export default class NumberService implements INumberService {
-	
   async getOneNumberByValue(value: string): Promise<INumber | null> {
     const result = await db.findOneNumberByValue(value);
     return result;
@@ -20,20 +20,21 @@ export default class NumberService implements INumberService {
     return result;
   }
 
-  async createNumber(number: INumber): Promise<void> {
-    await db.insertNumber(number);
+  async createNumber(number: INumber): Promise<ISuccessMessage> {
+    const result = await db.insertNumber(number);
+	return result
   }
 
   async updateNumber(
     id: number,
     fieldsToUpdate: IFieldsToUpdate
-  ): Promise<void> {
-    await db.updateNumber(id, fieldsToUpdate);
-    return;
+  ): Promise<ISuccessMessage> {
+    const result = await db.updateNumber(id, fieldsToUpdate);
+    return result; 
   }
-  
-  async deleteNumber(id: number): Promise<void> {
-    await db.deleteNumber(id);
-    return;
+
+  async deleteNumber(id: number): Promise<ISuccessMessage> {
+    const result = await db.deleteNumber(id);
+    return result;
   }
 }

@@ -19,7 +19,7 @@ api.get("/allNumbers", async (req: Request, res: Response) => {
     const page = Number(req.query.page ?? 1);
     const limit = Number(req.query.limit ?? defaultLimit);
     const numbers = await numberService.getAllNumbers();
-    
+
     if (numbers?.length === 0) {
       res.status(404).json(errorMessages.numberNoOne);
       return;
@@ -34,10 +34,8 @@ api.get("/allNumbers", async (req: Request, res: Response) => {
 
 api.get("/number", async (req: Request, res: Response) => {
   try {
-
     const result = await numberService.getOneNumber(req.body.id);
     res.status(201).send(result);
-
   } catch (error) {
     res.status(500).json(errorMessages.numberGet);
   }
@@ -51,10 +49,8 @@ api.post(
   checkForDuplicateValue,
   async (req: Request, res: Response) => {
     try {
-
-      await numberService.createNumber(req.body);
-      res.status(200).json(successMessages.numberCreate);
-
+      const result = await numberService.createNumber(req.body);
+      res.status(200).json(result);
     } catch (error) {
       res.status(500).json(errorMessages.numberCreate);
     }
@@ -68,10 +64,11 @@ api.put(
   validateUpdatingFieldsNumber,
   async (req: Request, res: Response) => {
     try {
-
-      await numberService.updateNumber(req.body.id, req.body.fieldsToUpdate);
-      res.status(200).json(successMessages.numberUpdate);
-
+      const result = await numberService.updateNumber(
+        req.body.id,
+        req.body.fieldsToUpdate
+      );
+      res.status(200).json(result);
     } catch (error) {
       res.status(500).json(errorMessages.numberUpdate);
     }
@@ -84,10 +81,8 @@ api.delete(
   isNumberExists,
   async (req: Request, res: Response) => {
     try {
-
-      await numberService.deleteNumber(req.body);
-      res.status(200).json(successMessages.numberDelete);
-
+      const result = await numberService.deleteNumber(req.body);
+      res.status(200).json(result);
     } catch (error) {
       res.status(500).json(errorMessages.numberDelete);
     }

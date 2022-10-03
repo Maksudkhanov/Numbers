@@ -61,13 +61,13 @@ auth.post(
 
       const hashPassword = bcrypt.hashSync(password, salt);
 
-      await userService.insertOneUser({
+      const result = await userService.insertOneUser({
         username,
         password: hashPassword,
         role,
       });
 
-      res.status(201).json(successMessages.userCreate);
+      res.status(201).json(result);
     } catch (error) {
       console.log(error);
       res.status(500).json(errorMessages.userCreate);

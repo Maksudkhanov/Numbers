@@ -1,25 +1,23 @@
-import { MongoClient } from "mongodb";
+import { Db, MongoClient, WithId } from "mongodb";
 import { IDatabase } from "../interfaces/db/db";
 import { IUser } from "../interfaces/entities/user";
 import dotenv from "dotenv";
 import { INumber } from "../interfaces/entities/number/number";
+import { successMessages } from "../shared/responseMessages/successMessages";
+import { ISuccessMessage } from "../interfaces/db/successMessage";
 
 dotenv.config();
 
 const DB_URI = process.env.DB_URI as string;
 const DB_NAME = process.env.DB_NAME as string;
 
+const client = new MongoClient(DB_URI);
+
 class Database implements IDatabase {
-  private _db: any;
-  private _client: MongoClient;
+  private _db: Db;
 
   constructor() {
-    this._client = new MongoClient(DB_URI);
-  }
-
-  async connect(): Promise<void> {
-    this._client.connect();
-    this._db = this._client.db(DB_NAME);
+    this._db = client.db(DB_NAME);
   }
 
   async findAllNumbers(): Promise<INumber[]> {
@@ -39,7 +37,7 @@ class Database implements IDatabase {
 
   async findOneNumber(id: number): Promise<INumber | null> {
     const result = await this._db.collection("numbers").findOne({ id: id });
-    
+
     if (result) {
       return {
         id: result.id,
@@ -69,25 +67,23 @@ class Database implements IDatabase {
     return result;
   }
 
-  async insertNumber(number: INumber): Promise<void> {
+  async insertNumber(number: INumber): Promise<ISuccessMessage> {
     await this._db.collection("numbers").insertOne(number);
-    return;
+    return successMessages.numberCreate;
   }
 
-  async updateNumber(id: number, fields: object): Promise<void> {
-    await this._db
-      .collection("numbers")
-      .findOneAndUpdate({ id: id }, { $set: fields });
-    return;
+  async updateNumber(id: number, fields: object): Promise<ISuccessMessage> {
+    await this._db.collection("numbers").findOneAndUpdate({ id: id }, fields);
+    return successMessages.numberUpdate;
   }
 
-  async deleteNumber(id: number): Promise<void> {
+  async deleteNumber(id: number): Promise<ISuccessMessage> {
     await this._db.collection("numbers").findOneAndDelete({ id: id });
-    return;
+    return successMessages.numberDelete;
   }
 
-  async findOneUser(query: object): Promise<IUser | null> {
-    const result = await this._db.collection("users").findOne(query);
+  async findOneUser(user: IUser): Promise<IUser | null> {
+    const result = await this._db.collection("users").findOne(user);
 
     if (result) {
       return {
@@ -100,7 +96,9 @@ class Database implements IDatabase {
   }
 
   async findOneUserByUsername(username: string): Promise<IUser | null> {
-    const result = await this._db.collection("users").findOne({username: username});
+    const result = await this._db
+      .collection("users")
+      .findOne({ username: username });
 
     if (result) {
       return {
@@ -112,11 +110,9 @@ class Database implements IDatabase {
     return result;
   }
 
-  async insertUser(user: IUser): Promise<void> {
-    console.log(user);
-    
+  async insertUser(user: IUser): Promise<ISuccessMessage> {
     await this._db.collection("users").insertOne(user);
-    return;
+    return successMessages.userCreate;
   }
 }
 
