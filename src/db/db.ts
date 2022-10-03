@@ -1,10 +1,11 @@
-import { Db, MongoClient, WithId } from "mongodb";
+import { Db, MongoClient } from "mongodb";
 import { IDatabase } from "../interfaces/db/db";
 import { IUser } from "../interfaces/entities/user";
 import dotenv from "dotenv";
 import { INumber } from "../interfaces/entities/number/number";
 import { successMessages } from "../shared/responseMessages/successMessages";
 import { ISuccessMessage } from "../interfaces/db/successMessage";
+import { IFieldsToUpdate } from "../interfaces/entities/number/fieldsToUpdate";
 
 dotenv.config();
 
@@ -72,12 +73,18 @@ class Database implements IDatabase {
     return successMessages.numberCreate;
   }
 
-  async updateNumber(id: number, fields: object): Promise<ISuccessMessage> {
-    await this._db.collection("numbers").findOneAndUpdate({ id: id }, fields);
+  async updateNumber(
+    id: number,
+    fields: IFieldsToUpdate
+  ): Promise<ISuccessMessage> {
+    await this._db
+      .collection("numbers")
+      .findOneAndUpdate({ id: id }, { $set: fields });
     return successMessages.numberUpdate;
   }
 
   async deleteNumber(id: number): Promise<ISuccessMessage> {
+    
     await this._db.collection("numbers").findOneAndDelete({ id: id });
     return successMessages.numberDelete;
   }

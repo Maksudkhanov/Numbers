@@ -7,7 +7,6 @@ import { validateNumberFields } from "../middlewares/number/validateNumberFields
 import { validateUpdatingFieldsNumber } from "../middlewares/number/validateUpdatingFieldsNumber";
 import NumberService from "../services/numberService";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
-import { successMessages } from "../shared/responseMessages/successMessages";
 import paginateItems from "../utils/paginateItems";
 
 export const numberService = new NumberService();
@@ -35,7 +34,11 @@ api.get("/allNumbers", async (req: Request, res: Response) => {
 api.get("/number", async (req: Request, res: Response) => {
   try {
     const result = await numberService.getOneNumber(req.body.id);
-    res.status(201).send(result);
+    if(!result) {
+      res.status(404).json(errorMessages.numberNoId)
+      return
+    }
+    res.status(201).json(result);
   } catch (error) {
     res.status(500).json(errorMessages.numberGet);
   }
@@ -70,6 +73,8 @@ api.put(
       );
       res.status(200).json(result);
     } catch (error) {
+      console.log(error);
+      
       res.status(500).json(errorMessages.numberUpdate);
     }
   }
@@ -81,7 +86,7 @@ api.delete(
   isNumberExists,
   async (req: Request, res: Response) => {
     try {
-      const result = await numberService.deleteNumber(req.body);
+      const result = await numberService.deleteNumber(req.body.id);
       res.status(200).json(result);
     } catch (error) {
       res.status(500).json(errorMessages.numberDelete);
