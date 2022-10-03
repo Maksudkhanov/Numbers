@@ -39,6 +39,7 @@ class Database implements IDatabase {
 
   async findOneNumber(id: number): Promise<INumber | null> {
     const result = await this._db.collection("numbers").findOne({ id: id });
+    
     if (result) {
       return {
         id: result.id,
@@ -55,6 +56,7 @@ class Database implements IDatabase {
     const result = await this._db
       .collection("numbers")
       .findOne({ value: value });
+
     if (result) {
       return {
         id: result.id,
@@ -86,6 +88,7 @@ class Database implements IDatabase {
 
   async findOneUser(query: object): Promise<IUser | null> {
     const result = await this._db.collection("users").findOne(query);
+
     if (result) {
       return {
         username: result.username,
@@ -98,6 +101,7 @@ class Database implements IDatabase {
 
   async findOneUserByUsername(username: string): Promise<IUser | null> {
     const result = await this._db.collection("users").findOne({username: username});
+
     if (result) {
       return {
         username: result.username,

@@ -13,6 +13,7 @@ export async function validateNumberFields(
     res.status(400).json(errorMessages.numberIdIsInteger);
     return;
   }
+  
   if (!isPhoneNumber(value)) {
     res.status(400).json(errorMessages.numberValueIsPhoneNumber);
     return;
@@ -22,14 +23,17 @@ export async function validateNumberFields(
     res.status(400).json(errorMessages.numberMonthyPriceIsNumber);
     return;
   }
+
   if (!isNumber(setupPrice)) {
     res.status(400).json(errorMessages.numberSetupPriceIsNumber);
     return;
   }
+
   if (Number(setupPrice) < 0) {
     res.status(400).json(errorMessages.numberSetupPriceIsNotNegative);
     return;
   }
+
   if (Number(monthyPrice) < 0) {
     res.status(400).json(errorMessages.numberMonthyPriceIsNotNegative);
     return;
