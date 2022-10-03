@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import db from "../db/db";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 
 export async function checkForDuplicateUsername(
@@ -7,8 +8,6 @@ export async function checkForDuplicateUsername(
   next: NextFunction
 ) {
   try {
-    const db = req.db;
-
     const user = await db.findOneUser({ username: req.body.username });
 
     if (user) {

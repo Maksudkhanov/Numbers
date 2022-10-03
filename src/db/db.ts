@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 import { IDatabase } from "../interfaces/db/db";
 import { IUser } from "../interfaces/entities/user";
 import dotenv from "dotenv";
-import { INumber } from '../interfaces/entities/number/number';
+import { INumber } from "../interfaces/entities/number/number";
 
 dotenv.config();
 
@@ -15,6 +15,21 @@ class Database implements IDatabase {
 
   constructor() {
     this._client = new MongoClient(DB_URI);
+  }
+  async findOneNumberByValue(value: string): Promise<INumber | null> {
+    const result = await this._db
+      .collection("numbers")
+      .findOne({ value: value });
+    if (result) {
+      return {
+        id: result.id,
+        value: result.value,
+        monthyPrice: result.monthyPrice,
+        setupPrice: result.setupPrice,
+        currency: result.currency,
+      };
+    }
+    return result;
   }
 
   async connect(): Promise<void> {

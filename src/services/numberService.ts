@@ -4,6 +4,10 @@ import { INumber } from "../interfaces/entities/number/number";
 import { INumberService } from "../interfaces/services/numberService";
 
 export default class NumberService implements INumberService {
+  async getOneNumberByValue(value: string): Promise<INumber | null> {
+    const result = await db.findOneNumberByValue(value);
+    return result;
+  }
   async getAllNumbers(): Promise<INumber[]> {
     const resuts = await db.findAllNumbers();
     return resuts;

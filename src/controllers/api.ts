@@ -4,6 +4,7 @@ import { checkForDuplicateId } from "../middlewares/checkForDuplicateId";
 import { checkForDuplicateValue } from "../middlewares/checkForDuplicateValue";
 import { isNumberExists } from "../middlewares/isNumberExists";
 import { validateNumberFields } from "../middlewares/validateNumberFields";
+import { validateUpdatingFieldsNumber } from "../middlewares/validateUpdatingFieldsNumber";
 import NumberService from "../services/numberService";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 import { successMessages } from "../shared/responseMessages/successMessages";
@@ -63,9 +64,9 @@ api.post(
 
 api.put(
   "/number",
-  // authCheckMiddleware,
+  authCheckMiddleware,
   isNumberExists,
-  // validateUpdatingFieldsNumber,
+  validateUpdatingFieldsNumber,
   async (req: Request, res: Response) => {
     try {
       const db = req.db;

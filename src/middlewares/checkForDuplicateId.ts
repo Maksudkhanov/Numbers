@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import db from "../db/db";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 
 export async function checkForDuplicateId(
@@ -7,8 +8,7 @@ export async function checkForDuplicateId(
   next: NextFunction
 ) {
   try {
-    const db = req.db;
-    const user = await db.findOneNumber({ id: req.body.id });
+    const user = await db.findOneNumber(req.body.id);
     if (user) {
       res.status(400).json(errorMessages.numberDuplicateId);
       return;
