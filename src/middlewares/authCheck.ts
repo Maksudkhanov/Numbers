@@ -23,8 +23,7 @@ export async function authCheckMiddleware(
     req.user = decodedData;
     next();
   } catch (error) {
-    console.log(error);
-    res.status(500).json(errorMessages.userAuth);
+    res.status(500).json(error);
     return;
   }
 }

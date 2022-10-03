@@ -16,6 +16,6 @@ export async function checkForDuplicateValue(
     }
     next();
   } catch (error: any) {
-    console.log(error);
+    res.status(500).json(error);
   }
 }

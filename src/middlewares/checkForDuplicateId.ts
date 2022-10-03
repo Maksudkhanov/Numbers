@@ -16,6 +16,6 @@ export async function checkForDuplicateId(
     }
     next();
   } catch (error) {
-    console.log(error);
+    res.status(500).json(error);
   }
 }

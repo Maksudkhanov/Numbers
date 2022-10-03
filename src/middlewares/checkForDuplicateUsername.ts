@@ -17,6 +17,6 @@ export async function checkForDuplicateUsername(
     }
     next();
   } catch (error: any) {
-    console.log(error);
+    res.status(500).json(error);
   }
 }

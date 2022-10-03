@@ -18,6 +18,6 @@ export async function isNumberExists(
 
     next();
   } catch (error) {
-    console.log(error);
+    res.status(500).json(error);
   }
 }
