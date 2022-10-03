@@ -36,8 +36,7 @@ api.get("/allNumbers", async (req: Request, res: Response) => {
 
 api.get("/number", async (req: Request, res: Response) => {
   try {
-    const db = req.db;
-    const result = await db.findOneNumber(req.body);
+    const result = await numberService.createNumber(req.body);
     res.status(201).send(result);
     return;
   } catch (error) {
@@ -69,8 +68,6 @@ api.put(
   validateUpdatingFieldsNumber,
   async (req: Request, res: Response) => {
     try {
-      const db = req.db;
-
       await numberService.updateNumber(req.body.id, req.body.fieldsToUpdate);
 
       res.status(200).json(successMessages.numberUpdate);
@@ -87,8 +84,7 @@ api.delete(
   isNumberExists,
   async (req: Request, res: Response) => {
     try {
-      const db = req.db;
-      await db.deleteNumber(req.body);
+      await numberService.deleteNumber(req.body);
       res.status(200).json(successMessages.numberDelete);
     } catch (error) {
       res.status(500).json(errorMessages.numberDelete);
