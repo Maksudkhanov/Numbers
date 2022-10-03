@@ -4,22 +4,21 @@ import { checkForDuplicateId } from "../middlewares/checkForDuplicateId";
 import { checkForDuplicateValue } from "../middlewares/checkForDuplicateValue";
 import { isNumberExists } from "../middlewares/isNumberExists";
 import { validateNumberFields } from "../middlewares/validateNumberFields";
-import { validateUpdatingFieldsNumber } from "../middlewares/validateUpdatingFieldsNumber";
+import NumberService from "../services/numberService";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 import { successMessages } from "../shared/responseMessages/successMessages";
 import paginateItems from "../utils/paginateItems";
 
+const numberService = new NumberService();
 const api = express.Router();
-
 const defaultLimit = 10;
 
 api.get("/allNumbers", async (req: Request, res: Response) => {
   try {
-    const db = req.db;
     const page = Number(req.query.page ?? 1);
     const limit = Number(req.query.limit ?? defaultLimit);
 
-    const numbers = await db.findAllNumbers();
+    const numbers = await numberService.getAllNumbers();
 
     if (numbers?.length === 0) {
       res.status(200).json(successMessages.numberNoOne);
@@ -53,8 +52,7 @@ api.post(
   checkForDuplicateValue,
   async (req: Request, res: Response) => {
     try {
-      const db = req.db;
-      await db.insertNumber(req.body);
+      await numberService.createNumber(req.body);
       res.status(200).json(successMessages.numberCreate);
       return;
     } catch (error) {
@@ -65,14 +63,14 @@ api.post(
 
 api.put(
   "/number",
-  authCheckMiddleware,
+  // authCheckMiddleware,
   isNumberExists,
-  validateUpdatingFieldsNumber,
+  // validateUpdatingFieldsNumber,
   async (req: Request, res: Response) => {
     try {
       const db = req.db;
 
-      await db.updateNumber(req.body.id, req.body.fieldsToUpdate);
+      await numberService.updateNumber(req.body.id, req.body.fieldsToUpdate);
 
       res.status(200).json(successMessages.numberUpdate);
       return;

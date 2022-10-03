@@ -1,19 +1,25 @@
 import { MongoClient } from "mongodb";
 import { IDatabase } from "../interfaces/db/db";
-import { INumber } from "../interfaces/entities/number";
 import { IUser } from "../interfaces/entities/user";
+import dotenv from "dotenv";
+import { INumber } from '../interfaces/entities/number/number';
+
+dotenv.config();
+
+const DB_URI = process.env.DB_URI as string;
+const DB_NAME = process.env.DB_NAME as string;
 
 class Database implements IDatabase {
   private _db: any;
   private _client: MongoClient;
 
-  constructor(uri: string) {
-    this._client = new MongoClient(uri);
+  constructor() {
+    this._client = new MongoClient(DB_URI);
   }
 
-  async connect(dbName: string): Promise<void> {
+  async connect(): Promise<void> {
     this._client.connect();
-    this._db = this._client.db(dbName);
+    this._db = this._client.db(DB_NAME);
   }
 
   async findAllNumbers(): Promise<INumber[]> {
@@ -31,8 +37,8 @@ class Database implements IDatabase {
     }));
   }
 
-  async findOneNumber(filter: object): Promise<INumber | null> {
-    const result = await this._db.collection("numbers").findOne(filter);
+  async findOneNumber(id: number): Promise<INumber | null> {
+    const result = await this._db.collection("numbers").findOne({ id: id });
     if (result) {
       return {
         id: result.id,
@@ -57,8 +63,8 @@ class Database implements IDatabase {
     return;
   }
 
-  async deleteNumber(query: object): Promise<void> {
-    await this._db.collection("numbers").findOneAndDelete(query);
+  async deleteNumber(id: number): Promise<void> {
+    await this._db.collection("numbers").findOneAndDelete({ id: id });
     return;
   }
 
@@ -80,4 +86,6 @@ class Database implements IDatabase {
   }
 }
 
-export default Database;
+const db = new Database();
+
+export default db;

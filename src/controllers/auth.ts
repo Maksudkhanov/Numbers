@@ -1,12 +1,11 @@
 import express, { Request, Response } from "express";
+import db from "../db/db";
 import bcrypt from "bcryptjs";
 import { checkForDuplicateUsername } from "../middlewares/checkForDuplicateUsername";
 import jwt from "jsonwebtoken";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 import { successMessages } from "../shared/responseMessages/successMessages";
-import dotenv from "dotenv";
 import { validateAuthFields } from "../middlewares/validateAuthFields";
-dotenv.config();
 
 const auth = express.Router();
 
@@ -22,7 +21,6 @@ auth.post(
   validateAuthFields,
   async (req: Request, res: Response) => {
     try {
-      const db = req.db;
       const { username, password, role } = req.body;
       const user = await db.findOneUser({ username: username });
       if (!user) {
@@ -51,7 +49,6 @@ auth.post(
   checkForDuplicateUsername,
   async (req: Request, res: Response) => {
     try {
-      const db = req.db;
       const { username, password, role } = req.body;
       const salt = bcrypt.genSaltSync(
         Number(process.env.BCYRPT_SALT as string)
