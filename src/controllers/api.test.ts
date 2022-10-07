@@ -1,13 +1,26 @@
 import request from "supertest";
 import db from "../db/db";
+import { IUser, UserRoles } from "../interfaces/entities/user";
 import server from "../server";
 import { successMessages } from "../shared/responseMessages/successMessages";
 import api from "./api";
 
+async function getAuthToken(userData: IUser) {
+  const reqBody = userData;
+  const response = await request(server).post("/auth/signin").send(reqBody);
+  return response.body.token;
+}
+
 describe("Testing Api Router", () => {
-  beforeAll((done) => {
+  let token: string;
+  beforeAll(async () => {
+    const userData = {
+      username: "Maksudkhanov",
+      password: "admin",
+      role: UserRoles.ADMIN,
+    };
+    token = await getAuthToken(userData);
     server.use("/api", api);
-    done();
   });
 
   afterAll((done) => {
@@ -20,7 +33,7 @@ describe("Testing Api Router", () => {
   });
 
   describe("GET /api/allNumbers", () => {
-    test("Should return 201 with all Numbers", async () => {
+    test("Should return all Numbers", async () => {
       const expectedData = {
         results: [
           {
@@ -41,7 +54,7 @@ describe("Testing Api Router", () => {
   });
 
   describe("GET /api/number", () => {
-    test("Should return all Numbers", async () => {
+    test("Should return Number with given id", async () => {
       const expectedData = {
         id: 42,
         value: "+55 84 91234-4321",
@@ -71,7 +84,10 @@ describe("Testing Api Router", () => {
         currency: "U$",
       };
 
-      const response = await request(server).post("/api/number").send(reqBody);
+      const response = await request(server)
+        .post("/api/number")
+        .set("Authorization", `Bearer ${token}`)
+        .send(reqBody);
 
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(expectedData);
@@ -88,8 +104,10 @@ describe("Testing Api Router", () => {
         },
       };
 
-      const response = await request(server).put("/api/number").send(reqBody);
-
+      const response = await request(server)
+        .put("/api/number")
+        .send(reqBody)
+        .set("Authorization", `Bearer ${token}`);
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(successMessages.numberUpdate);
     });
@@ -101,8 +119,10 @@ describe("Testing Api Router", () => {
         id: 41,
       };
 
-      const response = await request(server).delete("/api/number").send(reqBody);
-
+      const response = await request(server)
+        .delete("/api/number")
+        .send(reqBody)
+        .set("Authorization", `Bearer ${token}`);
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(successMessages.numberDelete);
     });

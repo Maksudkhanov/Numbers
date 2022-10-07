@@ -47,7 +47,7 @@ api.get("/number", async (req: Request, res: Response) => {
 
 api.post(
   "/number",
-  // authCheckMiddleware,
+  authCheckMiddleware,
   validateNumberFields,
   checkForDuplicateId,
   checkForDuplicateValue,
@@ -63,7 +63,7 @@ api.post(
 
 api.put(
   "/number",
-  // authCheckMiddleware,
+  authCheckMiddleware,
   isNumberExists,
   validateUpdatingFieldsNumber,
   async (req: Request, res: Response) => {
@@ -83,7 +83,7 @@ api.put(
 
 api.delete(
   "/number",
-  // authCheckMiddleware,
+  authCheckMiddleware,
   isNumberExists,
   async (req: Request, res: Response) => {
     try {
