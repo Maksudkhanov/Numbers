@@ -18,13 +18,14 @@ api.get("/allNumbers", async (req: Request, res: Response) => {
     const page = Number(req.query.page ?? 1);
     const limit = Number(req.query.limit ?? defaultLimit);
     const numbers = await numberService.getAllNumbers();
+    
 
     if (numbers?.length === 0) {
       res.status(404).json(errorMessages.numberNoOne);
       return;
     }
 
-    const paginatedNumbers = await paginateItems(numbers)(page, limit);
+    const paginatedNumbers = paginateItems(numbers)(page, limit);
     res.status(201).send(paginatedNumbers);
   } catch (error) {
     res.status(500).json(errorMessages.numbersGet);
@@ -46,7 +47,7 @@ api.get("/number", async (req: Request, res: Response) => {
 
 api.post(
   "/number",
-  authCheckMiddleware,
+  // authCheckMiddleware,
   validateNumberFields,
   checkForDuplicateId,
   checkForDuplicateValue,
@@ -62,7 +63,7 @@ api.post(
 
 api.put(
   "/number",
-  authCheckMiddleware,
+  // authCheckMiddleware,
   isNumberExists,
   validateUpdatingFieldsNumber,
   async (req: Request, res: Response) => {
@@ -82,7 +83,7 @@ api.put(
 
 api.delete(
   "/number",
-  authCheckMiddleware,
+  // authCheckMiddleware,
   isNumberExists,
   async (req: Request, res: Response) => {
     try {

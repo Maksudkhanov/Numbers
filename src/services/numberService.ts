@@ -11,8 +11,8 @@ export default class NumberService implements INumberService {
   }
 
   async getAllNumbers(): Promise<INumber[]> {
-    const resuts = await db.findAllNumbers();
-    return resuts;
+    const results = await db.findAllNumbers();    
+    return results;
   }
 
   async getOneNumber(id: number): Promise<INumber | null> {

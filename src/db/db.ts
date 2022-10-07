@@ -21,6 +21,10 @@ class Database implements IDatabase {
     this._db = client.db(DB_NAME);
   }
 
+  async disconnect() {
+    return client.close()
+  }
+
   async findAllNumbers(): Promise<INumber[]> {
     const result: any[] = await this._db
       .collection("numbers")
@@ -75,7 +79,7 @@ class Database implements IDatabase {
 
   async updateNumber(
     id: number,
-    fields: IFieldsToUpdate
+    fields: any
   ): Promise<ISuccessMessage> {
     await this._db
       .collection("numbers")

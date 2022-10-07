@@ -1,5 +1,5 @@
 export default function paginateItems(items: any[]) {
-  return async (page: number, limit: number) => {
+  return (page: number, limit: number) => {
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
 
