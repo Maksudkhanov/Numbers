@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { isPhoneNumber } from "../../utils/isPhoneNumber";
 import { isNumber } from "../../utils/isNumber";
 import { errorMessages } from "../../shared/responseMessages/errorMessages";
-export async function validateNumberFields(
+export function validateNumberFields(
   req: Request,
   res: Response,
   next: NextFunction

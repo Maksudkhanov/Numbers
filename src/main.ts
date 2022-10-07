@@ -1,5 +1,4 @@
 import server from "./server";
-import db from "./db/db";
 import apiController from "./controllers/api";
 import authController from "./controllers/auth";
 import dotenv from "dotenv";

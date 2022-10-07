@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { errorMessages } from "../../shared/responseMessages/errorMessages";
 import { isNumber } from "../../utils/isNumber";
 
-export async function validateUpdatingFieldsNumber(
+export function validateUpdatingFieldsNumber(
   req: Request,
   res: Response,
   next: NextFunction
@@ -29,7 +29,6 @@ export async function validateUpdatingFieldsNumber(
 
   const { monthyPrice, setupPrice } = fields;
   if (monthyPrice) {
-
     if (!isNumber(monthyPrice)) {
       res.status(400).json(errorMessages.numberMonthyPriceIsNumber);
       return;
@@ -41,12 +40,11 @@ export async function validateUpdatingFieldsNumber(
     }
   }
   if (setupPrice) {
-
     if (!isNumber(setupPrice)) {
       res.status(400).json(errorMessages.numberSetupPriceIsNumber);
       return;
     }
-    
+
     if (Number(setupPrice) < 0) {
       res.status(400).json(errorMessages.numberSetupPriceIsNotNegative);
       return;

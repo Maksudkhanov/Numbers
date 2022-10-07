@@ -3,7 +3,7 @@ import { errorMessages } from "../../shared/responseMessages/errorMessages";
 import dotenv from "dotenv";
 dotenv.config();
 
-export async function authCheckMiddleware(
+export function authCheckMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
@@ -11,17 +11,14 @@ export async function authCheckMiddleware(
   if (req.method === "OPTIONS") {
     next();
   }
-
-  try {
     const token = req.headers?.authorization?.split(" ")[1];
+    console.log(token);
+   
     if (!token) {
       res.status(403).json(errorMessages.userAuth);
       return;
     }
     
     next();
-  } catch (error) {
-    res.status(500).json(error);
-    return;
-  }
+
 }

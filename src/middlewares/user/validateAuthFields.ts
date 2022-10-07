@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { UserRoles } from "../../interfaces/entities/user";
 import { errorMessages } from "../../shared/responseMessages/errorMessages";
 
-export async function validateAuthFields(
+export function validateAuthFields(
   req: Request,
   res: Response,
   next: NextFunction

@@ -4,23 +4,23 @@ import { IUser, UserRoles } from "../interfaces/entities/user";
 import server from "../server";
 import { successMessages } from "../shared/responseMessages/successMessages";
 import api from "./api";
+import auth from "./auth";
 
 async function getAuthToken(userData: IUser) {
-  const reqBody = userData;
-  const response = await request(server).post("/auth/signin").send(reqBody);
+  const response = await request(server).post("/auth/signin").send(userData);
   return response.body.token;
 }
 
 describe("Testing Api Router", () => {
   let token: string;
   beforeAll(async () => {
+    server.use("/api", api);
     const userData = {
       username: "Maksudkhanov",
       password: "admin",
       role: UserRoles.ADMIN,
     };
-    token = await getAuthToken(userData);
-    server.use("/api", api);
+    token = await getAuthToken(userData)
   });
 
   afterAll((done) => {
@@ -84,10 +84,14 @@ describe("Testing Api Router", () => {
         currency: "U$",
       };
 
+      // console.log(token);
+
       const response = await request(server)
         .post("/api/number")
-        .set("Authorization", `Bearer ${token}`)
+        .set("Authorization", "Bearer "+token)
         .send(reqBody);
+
+      console.log(response.body);
 
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(expectedData);
@@ -104,10 +108,7 @@ describe("Testing Api Router", () => {
         },
       };
 
-      const response = await request(server)
-        .put("/api/number")
-        .send(reqBody)
-        .set("Authorization", `Bearer ${token}`);
+      const response = await request(server).put("/api/number").send(reqBody);
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(successMessages.numberUpdate);
     });
@@ -121,8 +122,7 @@ describe("Testing Api Router", () => {
 
       const response = await request(server)
         .delete("/api/number")
-        .send(reqBody)
-        .set("Authorization", `Bearer ${token}`);
+        .send(reqBody);
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(successMessages.numberDelete);
     });

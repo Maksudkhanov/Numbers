@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import { checkForDuplicateUsername } from "../middlewares/user/checkForDuplicateUsername";
 import jwt from "jsonwebtoken";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
-import { successMessages } from "../shared/responseMessages/successMessages";
 import { validateAuthFields } from "../middlewares/user/validateAuthFields";
 import { UserService } from "../services/userService";
 
