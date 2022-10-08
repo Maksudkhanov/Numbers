@@ -5,7 +5,6 @@ import dotenv from "dotenv";
 import { INumber } from "../interfaces/entities/number/number";
 import { successMessages } from "../shared/responseMessages/successMessages";
 import { ISuccessMessage } from "../interfaces/db/successMessage";
-import { IFieldsToUpdate } from "../interfaces/entities/number/fieldsToUpdate";
 
 dotenv.config();
 

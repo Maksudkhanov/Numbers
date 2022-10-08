@@ -3,6 +3,7 @@ import db from "../db/db";
 import { IUser, UserRoles } from "../interfaces/entities/user";
 import server from "../server";
 import { successMessages } from "../shared/responseMessages/successMessages";
+import paginateItems from '../utils/paginateItems';
 import api from "./api";
 import auth from "./auth";
 
@@ -72,6 +73,7 @@ describe("Testing Api Router", () => {
 
       const response = await request(server).get("/api/allNumbers");
 
+      expect(paginateItems).toHaveBeenCalledTimes(1)
       expect(response.status).toBe(201);
       expect(response.body).toStrictEqual(expectedData);
     });
