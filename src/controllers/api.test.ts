@@ -15,12 +15,6 @@ describe("Testing Api Router", () => {
   let token: string;
   beforeAll(async () => {
     server.use("/api", api);
-    const userData = {
-      username: "Maksudkhanov",
-      password: "admin",
-      role: UserRoles.ADMIN,
-    };
-    token = await getAuthToken(userData)
   });
 
   afterAll((done) => {
@@ -84,11 +78,18 @@ describe("Testing Api Router", () => {
         currency: "U$",
       };
 
-      // console.log(token);
+      const user = {
+        username: "Maksudkhanov",
+        password: "admin",
+        role: UserRoles.ADMIN,
+      };
+
+      // const token = await getAuthToken(user);
+      let token;
 
       const response = await request(server)
         .post("/api/number")
-        .set("Authorization", "Bearer "+token)
+        .set("Authorization", "Bearer " + token)
         .send(reqBody);
 
       console.log(response.body);
@@ -122,6 +123,7 @@ describe("Testing Api Router", () => {
 
       const response = await request(server)
         .delete("/api/number")
+        .set("Authorization", "Bearer " + token)
         .send(reqBody);
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(successMessages.numberDelete);

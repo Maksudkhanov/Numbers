@@ -37,6 +37,8 @@ auth.post(
       }
 
       const token = generateToken(user.username, user.role);
+      console.log(typeof token);
+      
       res.status(201).send({ token });
   
     } catch (error) {
