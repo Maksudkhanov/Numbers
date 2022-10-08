@@ -13,8 +13,16 @@ async function getAuthToken(userData: IUser) {
 
 describe("Testing Api Router", () => {
   let token: string;
+
   beforeAll(async () => {
     server.use("/api", api);
+    server.use("/auth", auth);
+    const user = {
+      username: "Maksudkhanov",
+      password: "admin",
+      role: UserRoles.ADMIN,
+    };
+    token = await getAuthToken(user);
   });
 
   afterAll((done) => {
@@ -26,13 +34,35 @@ describe("Testing Api Router", () => {
     jest.clearAllMocks();
   });
 
+  describe("POST /api/number", () => {
+    test("Should create Number", async () => {
+      const expectedData = successMessages.numberCreate;
+
+      const reqBody = {
+        id: 41,
+        value: "+15 84 91234-4321",
+        monthyPrice: "0.03",
+        setupPrice: "3.40",
+        currency: "U$",
+      };
+
+      const response = await request(server)
+        .post("/api/number")
+        .set("Authorization", "Bearer " + token)
+        .send(reqBody);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toStrictEqual(expectedData);
+    });
+  });
+
   describe("GET /api/allNumbers", () => {
     test("Should return all Numbers", async () => {
       const expectedData = {
         results: [
           {
-            id: 42,
-            value: "+55 84 91234-4321",
+            id: 41,
+            value: "+15 84 91234-4321",
             monthyPrice: "0.03",
             setupPrice: "3.40",
             currency: "U$",
@@ -50,27 +80,6 @@ describe("Testing Api Router", () => {
   describe("GET /api/number", () => {
     test("Should return Number with given id", async () => {
       const expectedData = {
-        id: 42,
-        value: "+55 84 91234-4321",
-        monthyPrice: "0.03",
-        setupPrice: "3.40",
-        currency: "U$",
-      };
-
-      const response = await request(server)
-        .get("/api/number")
-        .send({ id: 42 });
-
-      expect(response.status).toBe(201);
-      expect(response.body).toStrictEqual(expectedData);
-    });
-  });
-
-  describe("POST /api/number", () => {
-    test("Should create Number", async () => {
-      const expectedData = successMessages.numberCreate;
-
-      const reqBody = {
         id: 41,
         value: "+15 84 91234-4321",
         monthyPrice: "0.03",
@@ -78,23 +87,11 @@ describe("Testing Api Router", () => {
         currency: "U$",
       };
 
-      const user = {
-        username: "Maksudkhanov",
-        password: "admin",
-        role: UserRoles.ADMIN,
-      };
-
-      // const token = await getAuthToken(user);
-      let token;
-
       const response = await request(server)
-        .post("/api/number")
-        .set("Authorization", "Bearer " + token)
-        .send(reqBody);
+        .get("/api/number")
+        .send({ id: 41 });
 
-      console.log(response.body);
-
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(201);
       expect(response.body).toStrictEqual(expectedData);
     });
   });
@@ -109,7 +106,11 @@ describe("Testing Api Router", () => {
         },
       };
 
-      const response = await request(server).put("/api/number").send(reqBody);
+      const response = await request(server)
+        .put("/api/number")
+        .set("Authorization", "Bearer " + token)
+        .send(reqBody);
+
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(successMessages.numberUpdate);
     });
@@ -125,6 +126,7 @@ describe("Testing Api Router", () => {
         .delete("/api/number")
         .set("Authorization", "Bearer " + token)
         .send(reqBody);
+
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(successMessages.numberDelete);
     });

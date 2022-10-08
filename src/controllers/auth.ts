@@ -21,7 +21,6 @@ auth.post(
   validateAuthFields,
   async (req: Request, res: Response) => {
     try {
-
       const { username, password, role } = req.body;
       const user = await userService.getOneUserByUsername(username);
 
@@ -37,10 +36,8 @@ auth.post(
       }
 
       const token = generateToken(user.username, user.role);
-      console.log(typeof token);
       
       res.status(201).send({ token });
-  
     } catch (error) {
       console.log(error);
       res.status(500).json(errorMessages.userGet);
@@ -54,7 +51,6 @@ auth.post(
   checkForDuplicateUsername,
   async (req: Request, res: Response) => {
     try {
-
       const { username, password, role } = req.body;
       const salt = bcrypt.genSaltSync(
         Number(process.env.BCYRPT_SALT as string)
