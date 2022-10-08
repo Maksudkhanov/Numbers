@@ -5,7 +5,7 @@ import { INumber } from "../interfaces/entities/number/number";
 import { IUser, UserRoles } from "../interfaces/entities/user";
 import { successMessages } from "../shared/responseMessages/successMessages";
 
-class MockDatabase implements IDatabase {
+export class MockDatabase implements IDatabase {
   findOneNumber(id: number): Promise<INumber | null> {
     throw new Error("Method not implemented.");
   }
@@ -56,12 +56,12 @@ describe("UserService testing ...", () => {
       };
 
       const result = await mockDatabase.insertUser(inputData);
-      expect(result).toBe(successMessages.userCreate);
+      expect(result).toStrictEqual(successMessages.userCreate);
     });
   });
 
   describe("SigIn User", () => {
-    test("Should return token", async () => {
+    test("Should return User", async () => {
       const inputData = {
         username: "Maksudkhanov",
         password: "admin",
@@ -78,7 +78,7 @@ describe("UserService testing ...", () => {
         .mockImplementation(() => Promise.resolve(expectedData));
 
       const result = await mockDatabase.findOneUser(inputData);
-      expect(result).toBe(expectedData);
+      expect(result).toStrictEqual(expectedData);
     });
   });
 });
