@@ -6,7 +6,7 @@ import { isNumberExists } from "../middlewares/number/isNumberExists";
 import { validateNumberFields } from "../middlewares/number/validateNumberFields";
 import { validateUpdatingFieldsNumber } from "../middlewares/number/validateUpdatingFieldsNumber";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
-import paginateItems from "../utils/paginateItems";
+import {paginateItems} from "../utils/paginateItems";
 import { INumberService } from "../interfaces/services/numberService";
 
 export default function apiController(numberService: INumberService) {

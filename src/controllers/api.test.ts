@@ -1,22 +1,18 @@
 import request from "supertest";
-<<<<<<< HEAD
 import { ISuccessMessage } from "../interfaces/db/successMessage";
 import { IFieldsToUpdate } from "../interfaces/entities/number/fieldsToUpdate";
 import { INumber } from "../interfaces/entities/number/number";
 import { IUser, UserRoles } from "../interfaces/entities/user";
 import { INumberService } from "../interfaces/services/numberService";
-=======
-import db from "../db/db";
-import { ISuccessMessage } from '../interfaces/db/successMessage';
-import { IUser, UserRoles } from "../interfaces/entities/user";
-import { IUserService } from '../interfaces/services/userService';
->>>>>>> 0a946ae0d31eea2b8128d1a071b04b39b97ba128
 import server from "../server";
-import { UserService } from '../services/userService';
+import { UserService } from "../services/userService";
 import { successMessages } from "../shared/responseMessages/successMessages";
-import paginateItems from "../utils/paginateItems";
+import * as util from "../utils/paginateItems";
+import apiController from "./api";
 import api from "./api";
 import auth from "./auth";
+import jwt from "jsonwebtoken";
+import { ResourceLimits } from "worker_threads";
 
 class MockNumberService implements INumberService {
   getAllNumbers(): Promise<INumber[]> {
@@ -40,33 +36,13 @@ class MockNumberService implements INumberService {
 }
 
 describe("Testing Api Router", () => {
-<<<<<<< HEAD
   let mockNumberService: INumberService;
-=======
-  let token: string;
- 
->>>>>>> 0a946ae0d31eea2b8128d1a071b04b39b97ba128
 
   beforeAll(async () => {
+    mockNumberService = new MockNumberService();
+    const api = apiController(mockNumberService);
     server.use("/api", api);
     server.use("/auth", auth);
-<<<<<<< HEAD
-    mockNumberService = new MockNumberService();
-=======
-
-
-    const user = {
-      username: "Maksudkhanov",
-      password: "admin",
-      role: UserRoles.ADMIN,
-    };
-    token = await getAuthToken(user);
-  });
-
-  afterAll((done) => {
-    db.disconnect();
-    done();
->>>>>>> 0a946ae0d31eea2b8128d1a071b04b39b97ba128
   });
 
   beforeEach(() => {
@@ -75,7 +51,6 @@ describe("Testing Api Router", () => {
 
   describe("POST /api/number", () => {
     test("Should create Number", async () => {
-      
       const reqBody = {
         id: 41,
         value: "+15 84 91234-4321",
@@ -98,7 +73,16 @@ describe("Testing Api Router", () => {
         .spyOn(mockNumberService, "getOneNumberByValue")
         .mockImplementation(() => Promise.resolve(null));
 
-      const response = await request(server).post("/api/number").send(reqBody);
+      const jwtVerifyData = {
+        username: "Maksudkhanov",
+        role: UserRoles.ADMIN,
+      };
+      jest.spyOn(jwt, "verify").mockImplementation(() => jwtVerifyData);
+
+      const response = await request(server)
+        .post("/api/number")
+        .send(reqBody)
+        .set("Authorization", "Bearer TOKEN");
 
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(successMessages.numberCreate);
@@ -107,21 +91,31 @@ describe("Testing Api Router", () => {
 
   describe("GET /api/allNumbers", () => {
     test("Should return all Numbers", async () => {
+      const data = [
+        {
+          id: 41,
+          value: "+15 84 91234-4321",
+          monthyPrice: "0.03",
+          setupPrice: "3.40",
+          currency: "U$",
+        },
+      ];
       const expectedData = {
-        results: [
-          {
-            id: 41,
-            value: "+15 84 91234-4321",
-            monthyPrice: "0.03",
-            setupPrice: "3.40",
-            currency: "U$",
-          },
-        ],
+        results: data,
       };
+
+      jest
+        .spyOn(mockNumberService, "getAllNumbers")
+        .mockImplementation(() => Promise.resolve(data));
+
+      jest
+        .spyOn(util, "paginateItems")
+        .mockImplementation(
+          (items: any) => (page: number, limit: number) => expectedData
+        );
 
       const response = await request(server).get("/api/allNumbers");
 
-      expect(paginateItems).toHaveBeenCalledTimes(1);
       expect(response.status).toBe(201);
       expect(response.body).toStrictEqual(expectedData);
     });
@@ -156,10 +150,7 @@ describe("Testing Api Router", () => {
         },
       };
 
-      const response = await request(server)
-        .put("/api/number")
-        .set("Authorization", "Bearer " + token)
-        .send(reqBody);
+      const response = await request(server).put("/api/number").send(reqBody);
 
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(successMessages.numberUpdate);
@@ -174,7 +165,6 @@ describe("Testing Api Router", () => {
 
       const response = await request(server)
         .delete("/api/number")
-        .set("Authorization", "Bearer " + token)
         .send(reqBody);
 
       expect(response.status).toBe(200);
@@ -182,4 +172,3 @@ describe("Testing Api Router", () => {
     });
   });
 });
- 
