@@ -20,6 +20,7 @@ class MockUserService implements IUserService {
 }
 describe("Auth router", () => {
   let mockUserService: IUserService;
+
   beforeAll(() => {
     mockUserService = new MockUserService();
     const auth = authController(mockUserService);
@@ -47,11 +48,13 @@ describe("Auth router", () => {
         .mockImplementation(() => Promise.resolve(successMessages.userCreate));
 
       jest
-        .spyOn(mockUserService, "getOneUserByUsername").mockImplementation(()=> Promise.resolve(null))
+        .spyOn(mockUserService, "getOneUserByUsername")
+        .mockImplementation(() => Promise.resolve(null));
 
       const response = await request(server).post("/auth/signup").send(reqBody);
 
       expect(response.status).toBe(201);
+      expect(mockUserService.insertOneUser).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(successMessages.userCreate);
     });
   });
@@ -73,6 +76,7 @@ describe("Auth router", () => {
       const response = await request(server).post("/auth/signin").send(reqBody);
 
       expect(response.status).toBe(201);
+      expect(mockUserService.getOneUserByUsername).toBeCalledTimes(1);
       expect(response.body).toHaveProperty("token");
     });
   });

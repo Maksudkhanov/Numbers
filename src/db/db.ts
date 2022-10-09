@@ -92,18 +92,18 @@ export class Database implements IDatabase {
     return successMessages.numberDelete;
   }
 
-  async findOneUser(user: IUser): Promise<IUser | null> {
-    const result = await this._db.collection("users").findOne(user);
+  // async findOneUser(user: IUser): Promise<IUser | null> {
+  //   const result = await this._db.collection("users").findOne(user);
 
-    if (result) {
-      return {
-        username: result.username,
-        password: result.password,
-        role: result.role,
-      };
-    }
-    return result;
-  }
+  //   if (result) {
+  //     return {
+  //       username: result.username,
+  //       password: result.password,
+  //       role: result.role,
+  //     };
+  //   }
+  //   return result;
+  // }
 
   async findOneUserByUsername(username: string): Promise<IUser | null> {
     const result = await this._db

@@ -8,10 +8,10 @@ export class UserService implements IUserService {
   constructor(db: IDatabase) {
     this.db = db;
   }
-  async getOneUser(user: IUser): Promise<IUser | null> {
-    const result = await this.db.findOneUser(user);
-    return result;
-  }
+  // async getOneUser(user: IUser): Promise<IUser | null> {
+  //   const result = await this.db.findOneUser(user);
+  //   return result;
+  // }
 
   async insertOneUser(user: IUser): Promise<ISuccessMessage> {
     const result = await this.db.insertUser(user);

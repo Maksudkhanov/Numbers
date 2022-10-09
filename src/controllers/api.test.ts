@@ -2,17 +2,14 @@ import request from "supertest";
 import { ISuccessMessage } from "../interfaces/db/successMessage";
 import { IFieldsToUpdate } from "../interfaces/entities/number/fieldsToUpdate";
 import { INumber } from "../interfaces/entities/number/number";
-import { IUser, UserRoles } from "../interfaces/entities/user";
+import { UserRoles } from "../interfaces/entities/user";
 import { INumberService } from "../interfaces/services/numberService";
 import server from "../server";
-import { UserService } from "../services/userService";
 import { successMessages } from "../shared/responseMessages/successMessages";
 import * as util from "../utils/paginateItems";
 import apiController from "./api";
-import api from "./api";
 import auth from "./auth";
 import jwt from "jsonwebtoken";
-import { ResourceLimits } from "worker_threads";
 
 class MockNumberService implements INumberService {
   getAllNumbers(): Promise<INumber[]> {
@@ -85,6 +82,7 @@ describe("Testing Api Router", () => {
         .set("Authorization", "Bearer TOKEN");
 
       expect(response.status).toBe(200);
+      expect(mockNumberService.createNumber).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(successMessages.numberCreate);
     });
   });
@@ -117,6 +115,7 @@ describe("Testing Api Router", () => {
       const response = await request(server).get("/api/allNumbers");
 
       expect(response.status).toBe(201);
+      expect(mockNumberService.getAllNumbers).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(expectedData);
     });
   });
@@ -140,20 +139,13 @@ describe("Testing Api Router", () => {
         .send({ id: 41 });
 
       expect(response.status).toBe(201);
+      expect(mockNumberService.getOneNumber).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(expectedData);
     });
   });
 
   describe("PUT /api/number", () => {
     test("Should update Number with given id", async () => {
-      const reqBody = {
-        id: 41,
-        fieldsToUpdate: {
-          monthyPrice: "4",
-          setupPrice: "5",
-        },
-      };
-
       jest
         .spyOn(mockNumberService, "updateNumber")
         .mockImplementation(() =>
@@ -167,6 +159,7 @@ describe("Testing Api Router", () => {
         setupPrice: "3.40",
         currency: "U$",
       };
+
       jest
         .spyOn(mockNumberService, "getOneNumber")
         .mockImplementation(() => Promise.resolve(middleareData));
@@ -178,12 +171,21 @@ describe("Testing Api Router", () => {
 
       jest.spyOn(jwt, "verify").mockImplementation(() => jwtVerifyData);
 
+      const reqBody = {
+        id: 41,
+        fieldsToUpdate: {
+          monthyPrice: "4",
+          setupPrice: "5",
+        },
+      };
+
       const response = await request(server)
         .put("/api/number")
         .send(reqBody)
         .set("Authorization", "Bearer TOKEN");
 
       expect(response.status).toBe(200);
+      expect(mockNumberService.updateNumber).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(successMessages.numberUpdate);
     });
   });
@@ -225,6 +227,7 @@ describe("Testing Api Router", () => {
         .set("Authorization", "Bearer TOKEN");
 
       expect(response.status).toBe(200);
+      expect(mockNumberService.deleteNumber).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(successMessages.numberDelete);
     });
   });

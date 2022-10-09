@@ -10,7 +10,6 @@ describe("Databse testing", () => {
       findOneNumber: jest.fn(),
       findOneNumberByValue: jest.fn(),
       findOneUserByUsername: jest.fn(),
-      findOneUser: jest.fn(),
       updateNumber: jest.fn(),
       insertUser: jest.fn(),
       insertNumber: jest.fn(),
