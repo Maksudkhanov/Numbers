@@ -1,4 +1,3 @@
-import db from "../db/db";
 import { IDatabase } from "../interfaces/db/db";
 import { ISuccessMessage } from "../interfaces/db/successMessage";
 import { IFieldsToUpdate } from "../interfaces/entities/number/fieldsToUpdate";
@@ -48,11 +47,7 @@ describe("UserService testing ...", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockDatabase = new MockDatabase();
-    userService = new UserService();
-  });
-
-  afterEach(() => {
-    db.disconnect();
+    userService = new UserService(mockDatabase);
   });
 
   describe("SignUp User", () => {

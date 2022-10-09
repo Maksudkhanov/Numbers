@@ -1,14 +1,24 @@
 import { resolve } from "path";
+import db from "../db/db";
 import { IDatabase } from "../interfaces/db/db";
 import { INumber } from "../interfaces/entities/number/number";
+import { INumberService } from "../interfaces/services/numberService";
 import { successMessages } from "../shared/responseMessages/successMessages";
+import NumberService from "./numberService";
 import { MockDatabase } from "./userService..test";
 
 describe("NumberService testing ...", () => {
   let mockDatabase: IDatabase;
+  let numberService: INumberService;
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockDatabase = new MockDatabase();
+    numberService = new NumberService(mockDatabase);
+  });
+
+  afterAll(() => {
+    db.disconnect();
   });
 
   describe("Create Number", () => {
@@ -27,7 +37,7 @@ describe("NumberService testing ...", () => {
         currency: "U$",
       };
 
-      const result = await mockDatabase.insertNumber(inputData);
+      const result = await numberService.createNumber(inputData);
       expect(result).toStrictEqual(successMessages.numberCreate);
     });
   });
@@ -48,28 +58,11 @@ describe("NumberService testing ...", () => {
         },
       };
 
-      const result = await mockDatabase.updateNumber(
+      const result = await numberService.updateNumber(
         inputData.id,
         inputData.fieldsToUpdate
       );
       expect(result).toStrictEqual(successMessages.numberUpdate);
-    });
-  });
-
-  describe("Delete Number", () => {
-    test("Should return successMessage", async () => {
-      jest
-        .spyOn(mockDatabase, "deleteNumber")
-        .mockImplementation(() =>
-          Promise.resolve(successMessages.numberDelete)
-        );
-
-      const inputData = {
-        id: 41,
-      };
-
-      const result = await mockDatabase.deleteNumber(inputData.id);
-      expect(result).toStrictEqual(successMessages.numberDelete);
     });
   });
 
@@ -91,7 +84,7 @@ describe("NumberService testing ...", () => {
         .spyOn(mockDatabase, "findOneNumber")
         .mockImplementation(() => Promise.resolve(expectedData));
 
-      const result = await mockDatabase.findOneNumber(inputData.id);
+      const result = await numberService.getOneNumber(inputData.id);
       expect(result).toStrictEqual(expectedData);
     });
   });
@@ -112,8 +105,25 @@ describe("NumberService testing ...", () => {
         .spyOn(mockDatabase, "findAllNumbers")
         .mockImplementation(() => Promise.resolve(expectedData));
 
-      const result = await mockDatabase.findAllNumbers();
+      const result = await numberService.getAllNumbers();
       expect(result).toStrictEqual(expectedData);
+    });
+  });
+
+  describe("Delete Number", () => {
+    test("Should return successMessage", async () => {
+      jest
+        .spyOn(mockDatabase, "deleteNumber")
+        .mockImplementation(() =>
+          Promise.resolve(successMessages.numberDelete)
+        );
+
+      const inputData = {
+        id: 41,
+      };
+
+      const result = await numberService.deleteNumber(inputData.id);
+      expect(result).toStrictEqual(successMessages.numberDelete);
     });
   });
 });

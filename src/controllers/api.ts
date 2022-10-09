@@ -8,8 +8,9 @@ import { validateUpdatingFieldsNumber } from "../middlewares/number/validateUpda
 import NumberService from "../services/numberService";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 import paginateItems from "../utils/paginateItems";
+import db from "../db/db";
 
-export const numberService = new NumberService();
+export const numberService = new NumberService(db);
 const api = express.Router();
 const defaultLimit = 10;
 
@@ -18,7 +19,6 @@ api.get("/allNumbers", async (req: Request, res: Response) => {
     const page = Number(req.query.page ?? 1);
     const limit = Number(req.query.limit ?? defaultLimit);
     const numbers = await numberService.getAllNumbers();
-    
 
     if (numbers?.length === 0) {
       res.status(404).json(errorMessages.numberNoOne);
@@ -35,9 +35,9 @@ api.get("/allNumbers", async (req: Request, res: Response) => {
 api.get("/number", async (req: Request, res: Response) => {
   try {
     const result = await numberService.getOneNumber(req.body.id);
-    if(!result) {
-      res.status(404).json(errorMessages.numberNoId)
-      return
+    if (!result) {
+      res.status(404).json(errorMessages.numberNoId);
+      return;
     }
     res.status(201).json(result);
   } catch (error) {
@@ -75,7 +75,7 @@ api.put(
       res.status(200).json(result);
     } catch (error) {
       console.log(error);
-      
+
       res.status(500).json(errorMessages.numberUpdate);
     }
   }

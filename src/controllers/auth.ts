@@ -5,8 +5,9 @@ import jwt from "jsonwebtoken";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 import { validateAuthFields } from "../middlewares/user/validateAuthFields";
 import { UserService } from "../services/userService";
+import db from '../db/db';
 
-export const userService = new UserService();
+export const userService = new UserService(db);
 const auth = express.Router();
 
 function generateToken(username: string, role: string) {
@@ -36,7 +37,7 @@ auth.post(
       }
 
       const token = generateToken(user.username, user.role);
-      
+
       res.status(201).send({ token });
     } catch (error) {
       console.log(error);
