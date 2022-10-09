@@ -1,22 +1,20 @@
 import { NextFunction, Request, Response } from "express";
-import { numberService } from '../../controllers/api';
+import { INumberService } from "../../interfaces/services/numberService";
 import { errorMessages } from "../../shared/responseMessages/errorMessages";
 
-export async function checkForDuplicateId(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const user = await numberService.getOneNumber(req.body.id);
+export function checkForDuplicateId(numberService: INumberService) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = await numberService.getOneNumber(req.body.id);
 
-    if (user) {
-      res.status(400).json(errorMessages.numberDuplicateId);
-      return;
+      if (user) {
+        res.status(400).json(errorMessages.numberDuplicateId);
+        return;
+      }
+
+      next();
+    } catch (error) {
+      res.status(500).json(error);
     }
-    
-    next();
-  } catch (error) {
-    res.status(500).json(error);
-  }
+  };
 }

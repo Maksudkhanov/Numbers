@@ -1,10 +1,6 @@
 import request from "supertest";
-import db from "../db/db";
-import { ISuccessMessage } from '../interfaces/db/successMessage';
 import { IUser, UserRoles } from "../interfaces/entities/user";
-import { IUserService } from '../interfaces/services/userService';
 import server from "../server";
-import { UserService } from '../services/userService';
 import { successMessages } from "../shared/responseMessages/successMessages";
 import paginateItems from '../utils/paginateItems';
 import api from "./api";
@@ -30,11 +26,6 @@ describe("Testing Api Router", () => {
       role: UserRoles.ADMIN,
     };
     token = await getAuthToken(user);
-  });
-
-  afterAll((done) => {
-    db.disconnect();
-    done();
   });
 
   beforeEach(() => {

@@ -1,4 +1,3 @@
-import db from "../db/db";
 import { IDatabase } from "../interfaces/db/db";
 import { ISuccessMessage } from "../interfaces/db/successMessage";
 import { IFieldsToUpdate } from "../interfaces/entities/number/fieldsToUpdate";

@@ -79,6 +79,8 @@ describe("UserService testing ...", () => {
         .spyOn(mockDatabase, "findOneUser")
         .mockImplementation(() => Promise.resolve(inputDataAndExpectedData));
 
+	  jest.fn()
+
       const result = await userService.getOneUser(inputDataAndExpectedData);
       expect(result).toStrictEqual(inputDataAndExpectedData);
     });

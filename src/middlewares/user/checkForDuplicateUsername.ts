@@ -1,22 +1,20 @@
 import { Request, Response, NextFunction } from "express";
-import { userService } from "../../controllers/auth";
+import { IUserService } from "../../interfaces/services/userService";
 import { errorMessages } from "../../shared/responseMessages/errorMessages";
 
-export async function checkForDuplicateUsername(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const user = await userService.getOneUserByUsername(req.body.username);
+export function checkForDuplicateUsername(userService: IUserService) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = await userService.getOneUserByUsername(req.body.username);
 
-    if (user) {
-      res.status(400).json(errorMessages.userUsernameExists);
-      return;
+      if (user) {
+        res.status(400).json(errorMessages.userUsernameExists);
+        return;
+      }
+
+      next();
+    } catch (error: any) {
+      res.status(500).json(error);
     }
-    
-    next();
-  } catch (error: any) {
-    res.status(500).json(error);
-  }
+  };
 }

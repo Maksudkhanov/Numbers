@@ -1,5 +1,4 @@
 import { resolve } from "path";
-import db from "../db/db";
 import { IDatabase } from "../interfaces/db/db";
 import { INumber } from "../interfaces/entities/number/number";
 import { INumberService } from "../interfaces/services/numberService";
@@ -17,9 +16,6 @@ describe("NumberService testing ...", () => {
     numberService = new NumberService(mockDatabase);
   });
 
-  afterAll(() => {
-    db.disconnect();
-  });
 
   describe("Create Number", () => {
     test("Should return successMessage", async () => {

@@ -1,11 +1,13 @@
 import request from "supertest";
-import db from "../db/db";
 import { ISuccessMessage } from "../interfaces/db/successMessage";
 import { IUser, UserRoles } from "../interfaces/entities/user";
 import { IUserService } from "../interfaces/services/userService";
 import server from "../server";
 import { successMessages } from "../shared/responseMessages/successMessages";
-import auth from "./auth";
+import authController from "./auth";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
 class MockUserService implements IUserService {
   getOneUser(user: IUser): Promise<IUser | null> {
     throw new Error("Method not implemented.");
@@ -20,12 +22,9 @@ class MockUserService implements IUserService {
 describe("Auth router", () => {
   let mockUserService: IUserService;
   beforeAll(() => {
-    server.use("/auth", auth);
     mockUserService = new MockUserService();
-  });
-
-  afterAll(() => {
-    db.disconnect();
+    const auth = authController(mockUserService);
+    server.use("/auth", auth);
   });
 
   beforeEach(() => {
@@ -40,11 +39,19 @@ describe("Auth router", () => {
         role: UserRoles.ADMIN,
       };
 
+      jest.spyOn(bcrypt, "genSaltSync").mockImplementation(() => "SALT");
+
+      jest.spyOn(bcrypt, "hashSync").mockImplementation(() => "hashPassword");
+
       jest
         .spyOn(mockUserService, "insertOneUser")
         .mockImplementation(() => Promise.resolve(successMessages.userCreate));
 
-      const response = await request(server).post("/auth/signup").send(reqBody);      
+      jest
+        .spyOn(mockUserService, "getOneUserByUsername")
+        .mockImplementation(() => Promise.resolve(null));
+
+      const response = await request(server).post("/auth/signup").send(reqBody);
 
       expect(response.status).toBe(201);
       expect(response.body).toStrictEqual(successMessages.userCreate);
@@ -58,6 +65,12 @@ describe("Auth router", () => {
         password: "admin",
         role: UserRoles.ADMIN,
       };
+
+      jest
+        .spyOn(mockUserService, "getOneUserByUsername")
+        .mockImplementation(() => Promise.resolve(reqBody));
+
+      jest.spyOn(bcrypt, "compareSync").mockImplementation(() => true);
 
       const response = await request(server).post("/auth/signin").send(reqBody);
 

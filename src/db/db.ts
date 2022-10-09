@@ -11,17 +11,21 @@ dotenv.config();
 const DB_URI = process.env.DB_URI as string;
 const DB_NAME = process.env.DB_NAME as string;
 
-const client = new MongoClient(DB_URI);
-
-class Database implements IDatabase {
+export class Database implements IDatabase {
   private _db: Db;
+  private _client: MongoClient;
 
   constructor() {
-    this._db = client.db(DB_NAME);
+    this._client = new MongoClient(DB_URI);
+  }
+
+  async connect() {
+    await this._client.connect();
+    this._db = this._client.db(DB_NAME);
   }
 
   async disconnect() {
-    return client.close()
+    return this._client.close();
   }
 
   async findAllNumbers(): Promise<INumber[]> {
@@ -76,10 +80,7 @@ class Database implements IDatabase {
     return successMessages.numberCreate;
   }
 
-  async updateNumber(
-    id: number,
-    fields: any
-  ): Promise<ISuccessMessage> {
+  async updateNumber(id: number, fields: any): Promise<ISuccessMessage> {
     await this._db
       .collection("numbers")
       .findOneAndUpdate({ id: id }, { $set: fields });
@@ -87,7 +88,6 @@ class Database implements IDatabase {
   }
 
   async deleteNumber(id: number): Promise<ISuccessMessage> {
-    
     await this._db.collection("numbers").findOneAndDelete({ id: id });
     return successMessages.numberDelete;
   }
@@ -125,7 +125,3 @@ class Database implements IDatabase {
     return successMessages.userCreate;
   }
 }
-
-const db = new Database();
-
-export default db;
