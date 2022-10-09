@@ -1,3 +1,4 @@
+import db from "../db/db";
 import { IDatabase } from "../interfaces/db/db";
 import { ISuccessMessage } from "../interfaces/db/successMessage";
 import { IFieldsToUpdate } from "../interfaces/entities/number/fieldsToUpdate";
@@ -47,7 +48,15 @@ describe("UserService testing ...", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockDatabase = new MockDatabase();
+<<<<<<< HEAD
     userService = new UserService(mockDatabase);
+=======
+    userService = new UserService();
+  });
+
+  afterEach(() => {
+    db.disconnect();
+>>>>>>> 0a946ae0d31eea2b8128d1a071b04b39b97ba128
   });
 
   describe("SignUp User", () => {
@@ -78,8 +87,11 @@ describe("UserService testing ...", () => {
       jest
         .spyOn(mockDatabase, "findOneUser")
         .mockImplementation(() => Promise.resolve(inputDataAndExpectedData));
+<<<<<<< HEAD
 
 	  jest.fn()
+=======
+>>>>>>> 0a946ae0d31eea2b8128d1a071b04b39b97ba128
 
       const result = await userService.getOneUser(inputDataAndExpectedData);
       expect(result).toStrictEqual(inputDataAndExpectedData);

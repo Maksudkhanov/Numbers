@@ -1,10 +1,18 @@
 import request from "supertest";
+<<<<<<< HEAD
 import { ISuccessMessage } from "../interfaces/db/successMessage";
 import { IFieldsToUpdate } from "../interfaces/entities/number/fieldsToUpdate";
 import { INumber } from "../interfaces/entities/number/number";
 import { IUser, UserRoles } from "../interfaces/entities/user";
 import { INumberService } from "../interfaces/services/numberService";
+=======
+import db from "../db/db";
+import { ISuccessMessage } from '../interfaces/db/successMessage';
+import { IUser, UserRoles } from "../interfaces/entities/user";
+import { IUserService } from '../interfaces/services/userService';
+>>>>>>> 0a946ae0d31eea2b8128d1a071b04b39b97ba128
 import server from "../server";
+import { UserService } from '../services/userService';
 import { successMessages } from "../shared/responseMessages/successMessages";
 import paginateItems from "../utils/paginateItems";
 import api from "./api";
@@ -32,12 +40,33 @@ class MockNumberService implements INumberService {
 }
 
 describe("Testing Api Router", () => {
+<<<<<<< HEAD
   let mockNumberService: INumberService;
+=======
+  let token: string;
+ 
+>>>>>>> 0a946ae0d31eea2b8128d1a071b04b39b97ba128
 
   beforeAll(async () => {
     server.use("/api", api);
     server.use("/auth", auth);
+<<<<<<< HEAD
     mockNumberService = new MockNumberService();
+=======
+
+
+    const user = {
+      username: "Maksudkhanov",
+      password: "admin",
+      role: UserRoles.ADMIN,
+    };
+    token = await getAuthToken(user);
+  });
+
+  afterAll((done) => {
+    db.disconnect();
+    done();
+>>>>>>> 0a946ae0d31eea2b8128d1a071b04b39b97ba128
   });
 
   beforeEach(() => {
@@ -153,3 +182,4 @@ describe("Testing Api Router", () => {
     });
   });
 });
+ 
