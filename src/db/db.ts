@@ -8,24 +8,11 @@ import { ISuccessMessage } from "../interfaces/db/successMessage";
 
 dotenv.config();
 
-const DB_URI = process.env.DB_URI as string;
-const DB_NAME = process.env.DB_NAME as string;
-
 export class Database implements IDatabase {
   private _db: Db;
-  private _client: MongoClient;
 
-  constructor() {
-    this._client = new MongoClient(DB_URI);
-  }
-
-  async connect() {
-    await this._client.connect();
-    this._db = this._client.db(DB_NAME);
-  }
-
-  async disconnect() {
-    return this._client.close();
+  constructor(db: Db) {
+    this._db = db;
   }
 
   async findAllNumbers(): Promise<INumber[]> {
@@ -91,19 +78,6 @@ export class Database implements IDatabase {
     await this._db.collection("numbers").findOneAndDelete({ id: id });
     return successMessages.numberDelete;
   }
-
-  // async findOneUser(user: IUser): Promise<IUser | null> {
-  //   const result = await this._db.collection("users").findOne(user);
-
-  //   if (result) {
-  //     return {
-  //       username: result.username,
-  //       password: result.password,
-  //       role: result.role,
-  //     };
-  //   }
-  //   return result;
-  // }
 
   async findOneUserByUsername(username: string): Promise<IUser | null> {
     const result = await this._db
