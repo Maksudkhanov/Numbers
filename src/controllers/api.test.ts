@@ -131,6 +131,10 @@ describe("Testing Api Router", () => {
         currency: "U$",
       };
 
+      jest
+        .spyOn(mockNumberService, "getOneNumber")
+        .mockImplementation(() => Promise.resolve(expectedData));
+
       const response = await request(server)
         .get("/api/number")
         .send({ id: 41 });
@@ -150,7 +154,34 @@ describe("Testing Api Router", () => {
         },
       };
 
-      const response = await request(server).put("/api/number").send(reqBody);
+      jest
+        .spyOn(mockNumberService, "updateNumber")
+        .mockImplementation(() =>
+          Promise.resolve(successMessages.numberUpdate)
+        );
+
+      const middleareData = {
+        id: 41,
+        value: "+15 84 91234-4321",
+        monthyPrice: "0.03",
+        setupPrice: "3.40",
+        currency: "U$",
+      };
+      jest
+        .spyOn(mockNumberService, "getOneNumber")
+        .mockImplementation(() => Promise.resolve(middleareData));
+
+      const jwtVerifyData = {
+        username: "Maksudkhanov",
+        role: UserRoles.ADMIN,
+      };
+
+      jest.spyOn(jwt, "verify").mockImplementation(() => jwtVerifyData);
+
+      const response = await request(server)
+        .put("/api/number")
+        .send(reqBody)
+        .set("Authorization", "Bearer TOKEN");
 
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(successMessages.numberUpdate);
@@ -163,9 +194,35 @@ describe("Testing Api Router", () => {
         id: 41,
       };
 
+      const middleareData = {
+        id: 41,
+        value: "+15 84 91234-4321",
+        monthyPrice: "0.03",
+        setupPrice: "3.40",
+        currency: "U$",
+      };
+
+      jest
+        .spyOn(mockNumberService, "getOneNumber")
+        .mockImplementation(() => Promise.resolve(middleareData));
+
+      const jwtVerifyData = {
+        username: "Maksudkhanov",
+        role: UserRoles.ADMIN,
+      };
+
+      jest.spyOn(jwt, "verify").mockImplementation(() => jwtVerifyData);
+
+      jest
+        .spyOn(mockNumberService, "deleteNumber")
+        .mockImplementation(() =>
+          Promise.resolve(successMessages.numberDelete)
+        );
+
       const response = await request(server)
         .delete("/api/number")
-        .send(reqBody);
+        .send(reqBody)
+        .set("Authorization", "Bearer TOKEN");
 
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(successMessages.numberDelete);
