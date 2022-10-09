@@ -1,9 +1,10 @@
-import { IFieldsToUpdate } from '../entities/number/fieldsToUpdate';
+import { IFieldsToUpdate } from "../entities/number/fieldsToUpdate";
 import { INumber } from "../entities/number/number";
 import { IUser } from "../entities/user";
-import { ISuccessMessage } from './successMessage';
+import { ISuccessMessage } from "./successMessage";
 
 export interface IDatabase {
+  disconnect(): Promise<void>;
   findOneNumber(id: number): Promise<INumber | null>;
   findOneNumberByValue(value: string): Promise<INumber | null>;
   findAllNumbers(): Promise<INumber[] | []>;
