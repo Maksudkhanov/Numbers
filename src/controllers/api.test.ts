@@ -1,31 +1,43 @@
 import request from "supertest";
+import { ISuccessMessage } from "../interfaces/db/successMessage";
+import { IFieldsToUpdate } from "../interfaces/entities/number/fieldsToUpdate";
+import { INumber } from "../interfaces/entities/number/number";
 import { IUser, UserRoles } from "../interfaces/entities/user";
+import { INumberService } from "../interfaces/services/numberService";
 import server from "../server";
 import { successMessages } from "../shared/responseMessages/successMessages";
-import paginateItems from '../utils/paginateItems';
+import paginateItems from "../utils/paginateItems";
 import api from "./api";
 import auth from "./auth";
 
-async function getAuthToken(userData: IUser) {
-  const response = await request(server).post("/auth/signin").send(userData);
-  return response.body.token;
+class MockNumberService implements INumberService {
+  getAllNumbers(): Promise<INumber[]> {
+    throw new Error("Method not implemented.");
+  }
+  getOneNumber(id: number): Promise<INumber | null> {
+    throw new Error("Method not implemented.");
+  }
+  updateNumber(id: number, fields: IFieldsToUpdate): Promise<ISuccessMessage> {
+    throw new Error("Method not implemented.");
+  }
+  deleteNumber(id: number): Promise<ISuccessMessage> {
+    throw new Error("Method not implemented.");
+  }
+  getOneNumberByValue(value: string): Promise<INumber | null> {
+    throw new Error("Method not implemented.");
+  }
+  createNumber(number: INumber): Promise<ISuccessMessage> {
+    throw new Error("Method not implemented.");
+  }
 }
 
 describe("Testing Api Router", () => {
-  let token: string;
- 
+  let mockNumberService: INumberService;
 
   beforeAll(async () => {
     server.use("/api", api);
     server.use("/auth", auth);
-
-
-    const user = {
-      username: "Maksudkhanov",
-      password: "admin",
-      role: UserRoles.ADMIN,
-    };
-    token = await getAuthToken(user);
+    mockNumberService = new MockNumberService();
   });
 
   beforeEach(() => {
@@ -34,8 +46,7 @@ describe("Testing Api Router", () => {
 
   describe("POST /api/number", () => {
     test("Should create Number", async () => {
-      const expectedData = successMessages.numberCreate;
-
+      
       const reqBody = {
         id: 41,
         value: "+15 84 91234-4321",
@@ -44,13 +55,24 @@ describe("Testing Api Router", () => {
         currency: "U$",
       };
 
-      const response = await request(server)
-        .post("/api/number")
-        .set("Authorization", "Bearer " + token)
-        .send(reqBody);
+      jest
+        .spyOn(mockNumberService, "createNumber")
+        .mockImplementation(() =>
+          Promise.resolve(successMessages.numberCreate)
+        );
+
+      jest
+        .spyOn(mockNumberService, "getOneNumber")
+        .mockImplementation(() => Promise.resolve(null));
+
+      jest
+        .spyOn(mockNumberService, "getOneNumberByValue")
+        .mockImplementation(() => Promise.resolve(null));
+
+      const response = await request(server).post("/api/number").send(reqBody);
 
       expect(response.status).toBe(200);
-      expect(response.body).toStrictEqual(expectedData);
+      expect(response.body).toStrictEqual(successMessages.numberCreate);
     });
   });
 
@@ -70,7 +92,7 @@ describe("Testing Api Router", () => {
 
       const response = await request(server).get("/api/allNumbers");
 
-      expect(paginateItems).toHaveBeenCalledTimes(1)
+      expect(paginateItems).toHaveBeenCalledTimes(1);
       expect(response.status).toBe(201);
       expect(response.body).toStrictEqual(expectedData);
     });
@@ -131,4 +153,3 @@ describe("Testing Api Router", () => {
     });
   });
 });
- 

@@ -6,7 +6,6 @@ import server from "../server";
 import { successMessages } from "../shared/responseMessages/successMessages";
 import authController from "./auth";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 class MockUserService implements IUserService {
   getOneUser(user: IUser): Promise<IUser | null> {
