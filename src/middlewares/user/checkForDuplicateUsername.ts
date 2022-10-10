@@ -8,13 +8,15 @@ export function checkForDuplicateUsername(userService: IUserService) {
       const user = await userService.getOneUserByUsername(req.body.username);
 
       if (user) {
-        res.status(400).json(errorMessages.userUsernameExists);
+        res.status(400);
+        res.json(errorMessages.userUsernameExists);
         return;
       }
 
       next();
     } catch (error: any) {
-      res.status(500).json(error);
+      res.status(500);
+      res.json(error);
     }
   };
 }

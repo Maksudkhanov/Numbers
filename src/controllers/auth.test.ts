@@ -9,7 +9,7 @@ import bcrypt from "bcryptjs";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 import { isNull } from "util";
 
-class MockUserService implements IUserService {
+export class MockUserService implements IUserService {
   getOneUser(user: IUser): Promise<IUser | null> {
     throw new Error("Method not implemented.");
   }

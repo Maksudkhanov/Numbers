@@ -12,7 +12,7 @@ import auth from "./auth";
 import jwt from "jsonwebtoken";
 import { errorMessages } from "../shared/responseMessages/errorMessages";
 
-class MockNumberService implements INumberService {
+export class MockNumberService implements INumberService {
   getAllNumbers(): Promise<INumber[]> {
     throw new Error("Method not implemented.");
   }
