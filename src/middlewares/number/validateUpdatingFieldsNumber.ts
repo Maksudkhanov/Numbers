@@ -11,7 +11,8 @@ export function validateUpdatingFieldsNumber(
   const keys = Object.keys(fields);
 
   if (!fields) {
-    res.status(400).json(errorMessages.numberUpdateFieldsIsEmpty);
+    res.status(400);
+    res.json(errorMessages.numberUpdateFieldsIsEmpty);
     return;
   }
 
@@ -23,30 +24,35 @@ export function validateUpdatingFieldsNumber(
       fields.hasOwnProperty("setupPrice")
     )
   ) {
-    res.status(400).json(errorMessages.numberUpdateFields);
+    res.status(400);
+    res.json(errorMessages.numberUpdateFields);
     return;
   }
 
   const { monthyPrice, setupPrice } = fields;
   if (monthyPrice) {
     if (!isNumber(monthyPrice)) {
-      res.status(400).json(errorMessages.numberMonthyPriceIsNumber);
+      res.status(400);
+      res.json(errorMessages.numberMonthyPriceIsNumber);
       return;
     }
 
     if (Number(monthyPrice) < 0) {
-      res.status(400).json(errorMessages.numberMonthyPriceIsNotNegative);
+      res.status(400);
+      res.json(errorMessages.numberMonthyPriceIsNotNegative);
       return;
     }
   }
   if (setupPrice) {
     if (!isNumber(setupPrice)) {
-      res.status(400).json(errorMessages.numberSetupPriceIsNumber);
+      res.status(400);
+      res.json(errorMessages.numberSetupPriceIsNumber);
       return;
     }
 
     if (Number(setupPrice) < 0) {
-      res.status(400).json(errorMessages.numberSetupPriceIsNotNegative);
+      res.status(400);
+      res.json(errorMessages.numberSetupPriceIsNotNegative);
       return;
     }
   }

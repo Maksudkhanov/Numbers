@@ -8,13 +8,15 @@ export function isNumberExists(numberService: INumberService) {
       const result = await numberService.getOneNumber(req.body.id);
 
       if (!result) {
-        res.status(404).json(errorMessages.numberNoId);
+        res.status(404);
+        res.json(errorMessages.numberNoId);
         return;
       }
 
       next();
     } catch (error) {
-      res.status(500).json(error);
+      res.status(500);
+      res.json(error);
     }
   };
 }

@@ -8,13 +8,15 @@ export function checkForDuplicateValue(numberService: INumberService) {
       const value = await numberService.getOneNumberByValue(req.body.value);
 
       if (value) {
-        res.status(400).json(errorMessages.numberValueExists);
+        res.status(400)
+        res.json(errorMessages.numberValueExists);
         return;
       }
 
       next();
     } catch (error: any) {
-      res.status(500).json(error);
+      res.status(500)
+      res.json(error);
     }
   };
 }

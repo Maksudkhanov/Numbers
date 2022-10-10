@@ -10,32 +10,38 @@ export function validateNumberFields(
   const { id, value, monthyPrice, setupPrice, currency } = req.body;
 
   if (id <= 0 || !Number.isInteger(id)) {
-    res.status(400).json(errorMessages.numberIdIsInteger);
+    res.status(400);
+    res.json(errorMessages.numberIdIsInteger);
     return;
   }
-  
+
   if (!isPhoneNumber(value)) {
-    res.status(400).json(errorMessages.numberValueIsPhoneNumber);
+    res.status(400);
+    res.json(errorMessages.numberValueIsPhoneNumber);
     return;
   }
 
   if (!isNumber(monthyPrice)) {
-    res.status(400).json(errorMessages.numberMonthyPriceIsNumber);
+    res.status(400);
+    res.json(errorMessages.numberMonthyPriceIsNumber);
     return;
   }
 
   if (!isNumber(setupPrice)) {
-    res.status(400).json(errorMessages.numberSetupPriceIsNumber);
+    res.status(400);
+    res.json(errorMessages.numberSetupPriceIsNumber);
     return;
   }
 
   if (Number(setupPrice) < 0) {
-    res.status(400).json(errorMessages.numberSetupPriceIsNotNegative);
+    res.status(400);
+    res.json(errorMessages.numberSetupPriceIsNotNegative);
     return;
   }
 
   if (Number(monthyPrice) < 0) {
-    res.status(400).json(errorMessages.numberMonthyPriceIsNotNegative);
+    res.status(400);
+    res.json(errorMessages.numberMonthyPriceIsNotNegative);
     return;
   }
 

@@ -2,8 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { UserRoles } from "../../interfaces/entities/user";
 import { errorMessages } from "../../shared/responseMessages/errorMessages";
 
-// 21-23,27-29,33-35,39-41,45-47
-
 export function validateAuthFields(
   req: Request,
   res: Response,
