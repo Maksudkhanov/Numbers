@@ -41,7 +41,6 @@ export default function authController(userService: IUserService) {
 
         res.status(201).send({ token });
       } catch (error) {
-        console.log(error);
         res.status(500).json(errorMessages.userGet);
       }
     }
@@ -68,7 +67,6 @@ export default function authController(userService: IUserService) {
 
         res.status(201).json(result);
       } catch (error) {
-        console.log(error);
         res.status(500).json(errorMessages.userCreate);
       }
     }
