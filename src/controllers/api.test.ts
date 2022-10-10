@@ -81,6 +81,9 @@ describe("Testing Api Router", () => {
         .send(reqBody)
         .set("Authorization", "Bearer TOKEN");
 
+        console.log(response.body);
+        
+
       expect(response.status).toBe(200);
       expect(mockNumberService.createNumber).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(successMessages.numberCreate);
