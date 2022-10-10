@@ -1,7 +1,7 @@
 import { IDatabase } from "../interfaces/db/db";
 import { INumberService } from "../interfaces/services/numberService";
 import { successMessages } from "../shared/responseMessages/successMessages";
-import { MockDatabase } from "./mockDatabase";
+import { MockDatabase } from "./userService.test";
 import NumberService from "./numberService";
 
 describe("NumberService testing ...", () => {
@@ -79,6 +79,29 @@ describe("NumberService testing ...", () => {
         .mockImplementation(() => Promise.resolve(expectedData));
 
       const result = await numberService.getOneNumber(inputData.id);
+      expect(result).toStrictEqual(expectedData);
+    });
+  });
+
+  describe("Method FINDBYVALUE", () => {
+    test("Should get Number", async () => {
+      const expectedData = {
+        id: 41,
+        value: "+15 84 91234-4321",
+        monthyPrice: "0.03",
+        setupPrice: "3.40",
+        currency: "U$",
+      };
+
+      const inputData = {
+        value: "+15 84 91234-4321",
+      };
+
+      jest
+        .spyOn(mockDatabase, "findOneNumberByValue")
+        .mockImplementation(() => Promise.resolve(expectedData));
+
+      const result = await numberService.getOneNumberByValue(inputData.value);
       expect(result).toStrictEqual(expectedData);
     });
   });

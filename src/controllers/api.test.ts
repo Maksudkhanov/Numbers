@@ -10,6 +10,7 @@ import * as util from "../utils/paginateItems";
 import apiController from "./api";
 import auth from "./auth";
 import jwt from "jsonwebtoken";
+import { errorMessages } from "../shared/responseMessages/errorMessages";
 
 class MockNumberService implements INumberService {
   getAllNumbers(): Promise<INumber[]> {
@@ -40,6 +41,13 @@ describe("Testing Api Router", () => {
     const api = apiController(mockNumberService);
     server.use("/api", api);
     server.use("/auth", auth);
+
+    const jwtVerifyData = {
+      username: "Maksudkhanov",
+      role: UserRoles.ADMIN,
+    };
+
+    jest.spyOn(jwt, "verify").mockImplementation(() => jwtVerifyData);
   });
 
   beforeEach(() => {
@@ -47,8 +55,10 @@ describe("Testing Api Router", () => {
   });
 
   describe("POST /api/number", () => {
-    test("Should create Number", async () => {
-      const reqBody = {
+    let reqBody: INumber;
+
+    beforeAll(() => {
+      reqBody = {
         id: 41,
         value: "+15 84 91234-4321",
         monthyPrice: "0.03",
@@ -57,24 +67,20 @@ describe("Testing Api Router", () => {
       };
 
       jest
-        .spyOn(mockNumberService, "createNumber")
-        .mockImplementation(() =>
-          Promise.resolve(successMessages.numberCreate)
-        );
-
-      jest
         .spyOn(mockNumberService, "getOneNumber")
         .mockImplementation(() => Promise.resolve(null));
 
       jest
         .spyOn(mockNumberService, "getOneNumberByValue")
         .mockImplementation(() => Promise.resolve(null));
+    });
 
-      const jwtVerifyData = {
-        username: "Maksudkhanov",
-        role: UserRoles.ADMIN,
-      };
-      jest.spyOn(jwt, "verify").mockImplementation(() => jwtVerifyData);
+    test("Should create Number", async () => {
+      jest
+        .spyOn(mockNumberService, "createNumber")
+        .mockImplementation(() =>
+          Promise.resolve(successMessages.numberCreate)
+        );
 
       const response = await request(server)
         .post("/api/number")
@@ -84,6 +90,21 @@ describe("Testing Api Router", () => {
       expect(response.status).toBe(200);
       expect(mockNumberService.createNumber).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(successMessages.numberCreate);
+    });
+
+    test("Should 500 with error msg", async () => {
+      jest
+        .spyOn(mockNumberService, "createNumber")
+        .mockImplementation(() => Promise.reject(errorMessages.numberCreate));
+
+      const response = await request(server)
+        .post("/api/number")
+        .set("Authorization", "Bearer TOKEN")
+        .send(reqBody);
+
+      expect(response.status).toBe(500);
+      expect(mockNumberService.createNumber).toBeCalledTimes(1);
+      expect(response.body).toStrictEqual(errorMessages.numberCreate);
     });
   });
 
@@ -118,6 +139,30 @@ describe("Testing Api Router", () => {
       expect(mockNumberService.getAllNumbers).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(expectedData);
     });
+
+    test("Should 404 with error msg", async () => {
+      jest
+        .spyOn(mockNumberService, "getAllNumbers")
+        .mockImplementation(() => Promise.resolve([]));
+
+      const response = await request(server).get("/api/allNumbers");
+
+      expect(response.status).toBe(404);
+      expect(mockNumberService.getAllNumbers).toBeCalledTimes(1);
+      expect(response.body).toStrictEqual(errorMessages.numberNoOne);
+    });
+
+    test("Should 500 with error msg", async () => {
+      jest
+        .spyOn(mockNumberService, "getAllNumbers")
+        .mockImplementation(() => Promise.reject(errorMessages.numbersGet));
+
+      const response = await request(server).get("/api/allNumbers");
+
+      expect(response.status).toBe(500);
+      expect(mockNumberService.getAllNumbers).toBeCalledTimes(1);
+      expect(response.body).toStrictEqual(errorMessages.numbersGet);
+    });
   });
 
   describe("GET /api/number", () => {
@@ -142,15 +187,45 @@ describe("Testing Api Router", () => {
       expect(mockNumberService.getOneNumber).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(expectedData);
     });
+
+    test("Should return 404 with error msg", async () => {
+      jest
+        .spyOn(mockNumberService, "getOneNumber")
+        .mockImplementation(() => Promise.resolve(null));
+
+      const response = await request(server)
+        .get("/api/number")
+        .send({ id: 41 });
+
+      expect(response.status).toBe(404);
+      expect(mockNumberService.getOneNumber).toBeCalledTimes(1);
+      expect(response.body).toStrictEqual(errorMessages.numberNoId);
+    });
+
+    test("Should 500 with error msg", async () => {
+      jest
+        .spyOn(mockNumberService, "getOneNumber")
+        .mockImplementation(() => Promise.reject(errorMessages.numberGet));
+
+      const response = await request(server).get("/api/number");
+
+      expect(response.status).toBe(500);
+      expect(mockNumberService.getOneNumber).toBeCalledTimes(1);
+      expect(response.body).toStrictEqual(errorMessages.numberGet);
+    });
   });
 
   describe("PUT /api/number", () => {
-    test("Should update Number with given id", async () => {
-      jest
-        .spyOn(mockNumberService, "updateNumber")
-        .mockImplementation(() =>
-          Promise.resolve(successMessages.numberUpdate)
-        );
+    let reqBody: { id: number; fieldsToUpdate: IFieldsToUpdate };
+
+    beforeAll(() => {
+      reqBody = {
+        id: 41,
+        fieldsToUpdate: {
+          monthlyPrice: "4",
+          setupPrice: "5",
+        },
+      };
 
       const middleareData = {
         id: 41,
@@ -163,21 +238,14 @@ describe("Testing Api Router", () => {
       jest
         .spyOn(mockNumberService, "getOneNumber")
         .mockImplementation(() => Promise.resolve(middleareData));
+    });
 
-      const jwtVerifyData = {
-        username: "Maksudkhanov",
-        role: UserRoles.ADMIN,
-      };
-
-      jest.spyOn(jwt, "verify").mockImplementation(() => jwtVerifyData);
-
-      const reqBody = {
-        id: 41,
-        fieldsToUpdate: {
-          monthyPrice: "4",
-          setupPrice: "5",
-        },
-      };
+    test("Should update Number with given id", async () => {
+      jest
+        .spyOn(mockNumberService, "updateNumber")
+        .mockImplementation(() =>
+          Promise.resolve(successMessages.numberUpdate)
+        );
 
       const response = await request(server)
         .put("/api/number")
@@ -188,15 +256,32 @@ describe("Testing Api Router", () => {
       expect(mockNumberService.updateNumber).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(successMessages.numberUpdate);
     });
+
+    test("Should 500 with error msg", async () => {
+      jest
+        .spyOn(mockNumberService, "updateNumber")
+        .mockImplementation(() => Promise.reject(errorMessages.numberUpdate));
+
+      const response = await request(server)
+        .put("/api/number")
+        .set("Authorization", "Bearer TOKEN")
+        .send(reqBody);
+
+      expect(response.status).toBe(500);
+      expect(mockNumberService.updateNumber).toBeCalledTimes(1);
+      expect(response.body).toStrictEqual(errorMessages.numberUpdate);
+    });
   });
 
   describe("DELETE /api/number", () => {
-    test("Should delete Number with givev id", async () => {
-      const reqBody = {
+    let reqBody: { id: number };
+    let middleareData: INumber;
+    beforeAll(() => {
+      reqBody = {
         id: 41,
       };
 
-      const middleareData = {
+      middleareData = {
         id: 41,
         value: "+15 84 91234-4321",
         monthyPrice: "0.03",
@@ -207,14 +292,8 @@ describe("Testing Api Router", () => {
       jest
         .spyOn(mockNumberService, "getOneNumber")
         .mockImplementation(() => Promise.resolve(middleareData));
-
-      const jwtVerifyData = {
-        username: "Maksudkhanov",
-        role: UserRoles.ADMIN,
-      };
-
-      jest.spyOn(jwt, "verify").mockImplementation(() => jwtVerifyData);
-
+    });
+    test("Should delete Number with givev id", async () => {
       jest
         .spyOn(mockNumberService, "deleteNumber")
         .mockImplementation(() =>
@@ -229,6 +308,21 @@ describe("Testing Api Router", () => {
       expect(response.status).toBe(200);
       expect(mockNumberService.deleteNumber).toBeCalledTimes(1);
       expect(response.body).toStrictEqual(successMessages.numberDelete);
+    });
+
+    test("Should 500 with error msg", async () => {
+      jest
+        .spyOn(mockNumberService, "deleteNumber")
+        .mockImplementation(() => Promise.reject(errorMessages.numberDelete));
+
+      const response = await request(server)
+        .delete("/api/number")
+        .set("Authorization", "Bearer TOKEN")
+        .send(reqBody);
+
+      expect(response.status).toBe(500);
+      expect(mockNumberService.deleteNumber).toBeCalledTimes(1);
+      expect(response.body).toStrictEqual(errorMessages.numberDelete);
     });
   });
 });
