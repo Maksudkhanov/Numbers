@@ -1,5 +1,5 @@
 import request from "supertest";
-import { ISuccessMessage } from "../interfaces/db/successMessage";
+import { ISuccessMessage } from "../interfaces/messages/successMessage";
 import { IUser, UserRoles } from "../interfaces/entities/user";
 import { IUserService } from "../interfaces/services/userService";
 import server from "../server";

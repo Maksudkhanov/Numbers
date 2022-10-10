@@ -16,7 +16,8 @@ export function authCheckMiddleware(
   try {
     const token = req.headers?.authorization?.split(" ")[1];
     if (!token) {
-      res.status(403).json(errorMessages.userAuth);
+      res.status(403);
+      res.json(errorMessages.userAuth);
       return;
     }
 
@@ -24,6 +25,7 @@ export function authCheckMiddleware(
 
     next();
   } catch (error) {
-    res.status(403).json(errorMessages.userAuth);
+    res.status(403);
+    res.json(errorMessages.userAuth);
   }
 }

@@ -4,7 +4,7 @@ import { IUser } from "../interfaces/entities/user";
 import dotenv from "dotenv";
 import { INumber } from "../interfaces/entities/number/number";
 import { successMessages } from "../shared/responseMessages/successMessages";
-import { ISuccessMessage } from "../interfaces/db/successMessage";
+import { ISuccessMessage } from "../interfaces/messages/successMessage";
 
 dotenv.config();
 

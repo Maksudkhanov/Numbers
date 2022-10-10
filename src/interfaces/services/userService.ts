@@ -1,4 +1,4 @@
-import { ISuccessMessage } from '../db/successMessage';
+import { ISuccessMessage } from '../messages/successMessage';
 import { IUser } from "../entities/user";
 
 export interface IUserService {

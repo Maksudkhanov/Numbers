@@ -1,7 +1,7 @@
 import { IFieldsToUpdate } from "../entities/number/fieldsToUpdate";
 import { INumber } from "../entities/number/number";
 import { IUser } from "../entities/user";
-import { ISuccessMessage } from "./successMessage";
+import { ISuccessMessage } from "../messages/successMessage";
 
 export interface IDatabase {
   findOneNumber(id: number): Promise<INumber | null>;

@@ -1,4 +1,4 @@
-import { ISuccessMessage } from '../db/successMessage';
+import { ISuccessMessage } from '../messages/successMessage';
 import { IFieldsToUpdate } from "../entities/number/fieldsToUpdate";
 import { INumber } from "../entities/number/number";
 

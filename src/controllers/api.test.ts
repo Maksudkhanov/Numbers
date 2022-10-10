@@ -1,5 +1,5 @@
 import request from "supertest";
-import { ISuccessMessage } from "../interfaces/db/successMessage";
+import { ISuccessMessage } from "../interfaces/messages/successMessage";
 import { IFieldsToUpdate } from "../interfaces/entities/number/fieldsToUpdate";
 import { INumber } from "../interfaces/entities/number/number";
 import { UserRoles } from "../interfaces/entities/user";
