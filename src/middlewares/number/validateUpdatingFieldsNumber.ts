@@ -8,13 +8,14 @@ export function validateUpdatingFieldsNumber(
   next: NextFunction
 ) {
   const fields = req.body.fieldsToUpdate;
-  const keys = Object.keys(fields);
-
+  
   if (!fields) {
     res.status(400);
     res.json(errorMessages.numberUpdateFieldsIsEmpty);
     return;
   }
+  
+  const keys = Object.keys(fields);
 
   const IsTwoParamsMax = keys.length <= 2 && keys.length >= 1;
   if (
